@@ -10,11 +10,11 @@ function getUserPosts(id) {
 }
 
 function getPostElement(elem,curIndex, avatarField="") {
-    let newElement = "<div class='row post'>\n" +
+    let newElement = "<div class='row post d-flex'>\n" +
         "                <input type='hidden' class='postId' value='"+elem.id+"'>\n" +
-        "                <div class='col-1 post-left'>\n" +
-        "                    <div class=''>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a>"+avatarField+"</div>\n" +
-        "                    <div class='post-bottom'>Дата публикации: "+elem.pubDate+"</div>\n" +
+        "                <div class='col-1 d-flex align-items-stretch flex-column'>\n" +
+        "                    <div class='align-self-start flex-grow '>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a>"+avatarField+"</div>\n" +
+        "                    <div class=''>Дата публикации: "+elem.pubDate+"</div>\n" +
         "                </div>\n" +
         "                <div class='col-10'>\n" +
         "                    <div class='container'>\n" +
@@ -119,10 +119,10 @@ function getPostComments(postId) {
 
         data.comments.forEach(function (elem, key) {
             let curIndex = curCount + key;
-            let newElement = "<div class='row comment'>\n" +
-                "                <div class='col-1 comment-left'>\n" +
-                "                    <div>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a><img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'></div>" +
-                "                    <div class='comment-bottom'>Дата комментария: "+elem.pubDate+"</div>\n" +
+            let newElement = "<div class='row comment d-flex'>\n" +
+                "                <div class='col-1 d-flex align-items-stretch flex-column'>\n" +
+                "                    <div class='align-self-start flex-grow '>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a><img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'></div>" +
+                "                    <div class=''>Дата комментария: "+elem.pubDate+"</div>\n" +
                 "                </div>\n" +
                 "                <div class='col-10'>\n" +
                 "                    <div class='container'>\n" +
