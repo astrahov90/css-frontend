@@ -16,7 +16,15 @@
 <body>
 <?php include 'app/views/layout/header.php' ?>
 
-<?php echo "Страница не найдена" ?>
+<section class="section-body bg-light section-middle">
+    <div class="container bg-light">
+        <div class="row">
+            <div class="col-12">Страница не найдена, обратитесь к разработчикам.
+            </div>
+        </div>
+    </div>
+
+</section>
 
 <?php include 'app/views/layout/footer.php' ?>
 </body>

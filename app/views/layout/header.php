@@ -3,7 +3,7 @@
         <img width="40px" height="32px" src="/assets/img/logo.svg">
     </a>
     <div class="profile-menu">
-        <?php if ($_SESSION['isAuthorized']): ?>
+        <?php if (isset($_SESSION['isAuthorized']) && $_SESSION['isAuthorized']): ?>
             <a class="dropdown-toggle" href="#"><?php echo $_SESSION['userName'] ?></a>
             <ul class="dropdown-menu">
                 <li><a href="/profile/">Профиль</a></li>
@@ -24,7 +24,7 @@
             <li <?php if (isset($authors)) echo'class="active"'?>>
                 <a href="/authors/">Авторы</a>
             </li>
-            <?php if (!$_SESSION['isAuthorized']): ?>
+            <?php if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized']): ?>
             <li <?php if (isset($newPost)) echo'class="active"'?>>
                 <a href="/?newPost">Новый пост</a>
             </li>

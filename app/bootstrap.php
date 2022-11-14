@@ -1,8 +1,17 @@
 <?php
 
+error_reporting(E_ERROR | E_PARSE);
+
 session_start();
 include 'core/config.php';
-spl_autoload_register();
+
+spl_autoload_register(function($className) {
+    $path = __DIR__ . '/'  . $className . '.php';
+    $path = str_replace("\\",DIRECTORY_SEPARATOR, $path);
+    if (is_file($path)) {
+        require_once $path;
+    }
+});
 
 $pdo = null;
 try
@@ -23,10 +32,6 @@ require_once 'core/controller.php';
 require_once 'core/router.php';
 
 \core\Router::start($pdo);
-
-
-#$postsModel = new \models\Posts($pdo);
-#$usersModel = new \models\Users($pdo);
 
 function render_template($template, $params)
 {

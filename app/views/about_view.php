@@ -4,9 +4,8 @@
             <div class="col-12">Этот проект построен при использовании следующих технологий:
                 <ul>
                     <li>HTML+JS+JQUERY</li>
-                    <li>BOOTSTRAP</li>
-                    <li>PHP+YII2 (backend)</li>
-                    <li>REACTJS (frontend)</li>
+                    <li>PURE CSS</li>
+                    <li>MVC BACKEND</li>
                 </ul>
             </div>
         </div>
