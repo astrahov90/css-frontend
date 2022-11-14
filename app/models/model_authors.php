@@ -4,8 +4,8 @@ class Model_Authors extends \core\Model {
 
     const QUERY_BASE = "SELECT
         users.id as authorId, users.name as authorName, users.iconPath, users.signDate, users.description, COUNT(posts.id) as posts_count
-        FROM posts
-        INNER JOIN users ON posts.author=users.id :WHERE
+        FROM users
+        LEFT JOIN posts ON users.id=posts.author :WHERE
         GROUP BY users.id, users.name, users.iconPath, users.signDate, users.description
         ORDER BY users.name
         LIMIT 5 OFFSET :offset";
@@ -23,7 +23,7 @@ class Model_Authors extends \core\Model {
         $authors = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         $authors = array_map(function ($elem){
-            $elem["signDate"] = date("j.m.Y", $elem["signDate"]/1000);
+            $elem["signDate"] = date("d.m.Y", $elem["signDate"]);
             return $elem;
         },$authors);
 
@@ -64,7 +64,7 @@ class Model_Authors extends \core\Model {
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["signDate"] = date("j.m.Y", $info["signDate"]/1000);
+        $info["signDate"] = date("d.m.Y", $info["signDate"]);
 
         return $info;
     }

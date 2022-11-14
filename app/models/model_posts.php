@@ -35,12 +35,7 @@ class Model_Posts extends \core\Model {
         $posts = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         $posts = array_map(function ($elem){
-            try {
-                $elem["pubDate"] = date("j.m.Y H:i:s", $elem["pubDate"]/1000);
-            }
-            catch(Exception $e){
-                $elem["pubDate"] = (\DateTime::createFromFormat ( "Y-m-d H:i:s", $elem["pubDate"]))->format("j.n.Y H:i:s");
-            }
+            $elem["pubDate"] = date("d.m.Y H:i:s", $elem["pubDate"]);
             $elem["comments_count_text"] = $elem["comments_count"]." ".$this->getCommentSuffix($elem["comments_count"]);
             $elem["text"] = $this->bbCodeDecode($elem["text"]);
             return $elem;
@@ -97,14 +92,7 @@ class Model_Posts extends \core\Model {
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        try {
-            $info["pubDate"] = date("j.m.Y H:i:s", $info["pubDate"]/1000);
-        }
-        catch(Exception $e){
-            $info["pubDate"] = (\DateTime::createFromFormat ( "Y-m-d H:i:s", $info["pubDate"]))->format("j.n.Y H:i:s");
-        }
-
-       // $info["pubDate"] = (\DateTime::createFromFormat ( "Y-m-d H:i:s", $info["pubDate"]))->format("j.n.Y H:i:s");
+        $info["pubDate"] = date("d.m.Y H:i:s", $info["pubDate"]);
         $info["comments_count_text"] = $info["comments_count"]." ".$this->getCommentSuffix($info["comments_count"]);
         $info["text"] = $this->bbCodeDecode($info["text"]);
 
@@ -140,8 +128,7 @@ class Model_Posts extends \core\Model {
         $query->bindParam("authorId", $authorId);
         $query->bindParam("text", $text);
 
-        $date = new DateTime(null);
-        $query->bindValue("pubDate", ($date->getTimestamp())*1000);
+        $query->bindValue("pubDate", time());
 
         $query->execute();
 

@@ -21,9 +21,9 @@ class Controller_Profile extends \core\Controller
             if (isset($_FILES['avatar']))
             {
                 $uploaddir = '/files/users/';
-                $uploadfile = $uploaddir . uniqid(rand(), false).'.'.pathinfo(basename($_FILES['avatar']['name']), PATHINFO_EXTENSION);;
+                $uploadfile = $uploaddir . uniqid(rand(), false).'.'.pathinfo(basename($_FILES['avatar']['name']), PATHINFO_EXTENSION);
 
-                move_uploaded_file($_FILES['avatar']['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/".$uploadfile);
+                move_uploaded_file($_FILES['avatar']['tmp_name'], $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.$uploadfile);
 
                 $this->model->updateUserAvatar($_SESSION["userId"], $uploadfile);
             }

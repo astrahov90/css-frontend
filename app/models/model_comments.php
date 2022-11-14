@@ -23,7 +23,7 @@ class Model_Comments extends \core\Model {
         $posts = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         $posts = array_map(function ($elem){
-            $elem["pubDate"] = date("j.m.Y H:i:s", $elem["pubDate"]/1000);
+            $elem["pubDate"] = date("d.m.Y H:i:s", $elem["pubDate"]);
             $elem["text"] = $this->bbCodeDecode($elem["text"]);
             return $elem;
         },$posts);
@@ -60,9 +60,7 @@ class Model_Comments extends \core\Model {
         $query->bindParam("postId", $postId);
         $query->bindParam("authorId", $authorId);
         $query->bindParam("comment", $comment);
-
-        $date = new DateTime(null);
-        $query->bindValue("time", ($date->getTimestamp())*1000);
+        $query->bindValue("time", time());
 
         $query->execute();
 

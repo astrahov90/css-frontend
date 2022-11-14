@@ -1,21 +1,16 @@
+RewriteEngine on
 
-# use mod_rewrite for pretty URL support
-            RewriteEngine on
+RewriteRule 404 notFound.php
 
-            RewriteRule 404 notFound.php
-            # If a directory or a file exists, use the request directly
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteCond %{REQUEST_FILENAME} !-d
-            # Otherwise forward the request to index.php
-            RewriteRule . index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-            # use index.php as index file
-            DirectoryIndex index.php
+RewriteRule . index.php
 
-            # ...other settings...
-            # Apache 2.4
-            Require all granted
+DirectoryIndex index.php
 
-            ## Apache 2.2
-            # Order allow,deny
-            # Allow from all
+Require all granted
+
+<Files "init.php">
+  Require all denied
+</Files>
