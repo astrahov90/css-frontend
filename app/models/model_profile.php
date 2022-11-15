@@ -3,7 +3,7 @@
 class Model_Profile extends \core\Model {
 
     const QUERY_BASE = "SELECT
-        * from users WHERE id=:id";
+        * from user WHERE id=:id";
 
     public function getUserInfo($userId){
 
@@ -15,19 +15,20 @@ class Model_Profile extends \core\Model {
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["signDate"] = date("j.m.Y", $info["signDate"]/1000);
+        $info["created_at"] = date("d.m.Y", $info["created_at"]/1000);
 
         return $info;
     }
 
-    public function updateUserAvatar($userId, $uploadedFile){
+    public function updateUserAvatar($id, $uploadedFile){
 
-        $queryString = "UPDATE users SET iconPath=:filePath WHERE id=:id";
+        $queryString = "UPDATE user SET iconPath=:iconPath, updated_at=:updated_at WHERE id=:id";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("id", $userId);
-        $query->bindParam("filePath", $uploadedFile);
+        $query->bindParam("id", $id);
+        $query->bindParam("iconPath", $uploadedFile);
+        $query->bindValue("updated_at", time());
 
         $query->execute();
 

@@ -14,7 +14,7 @@ function getPostElement(elem,curIndex, avatarField="") {
         "                <input type='hidden' class='postId' value='"+elem.id+"'>\n" +
         "                <div class='col-1 d-flex align-items-stretch flex-column'>\n" +
         "                    <div class='align-self-start flex-grow '>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a>"+avatarField+"</div>\n" +
-        "                    <div class=''>Дата публикации: "+elem.pubDate+"</div>\n" +
+        "                    <div class=''>Дата публикации: "+elem.created_at+"</div>\n" +
         "                </div>\n" +
         "                <div class='col-10'>\n" +
         "                    <div class='container'>\n" +
@@ -30,7 +30,7 @@ function getPostElement(elem,curIndex, avatarField="") {
         "                                </div>\n" +
         "                                <input type='checkbox' data-more-checker='card-read-more-checker' id='card-read-more-checker-"+curIndex+"'/>\n" +
         "                                <div class='card-body'>\n" +
-        "                                    <p>"+elem.text+"</p>\n" +
+        "                                    <p>"+elem.body+"</p>\n" +
         "                                    <div class='card-bottom'>\n" +
         "                                    </div>\n" +
         "                                </div>\n" +
@@ -118,11 +118,11 @@ function getPostComments(postId) {
     $.get(querystring).done(function (data) {
 
         data.comments.forEach(function (elem, key) {
-            let curIndex = curCount + key;
+            let curIndex = ++curCount;
             let newElement = "<div class='row comment d-flex'>\n" +
                 "                <div class='col-1 d-flex align-items-stretch flex-column'>\n" +
-                "                    <div class='align-self-start flex-grow '>Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a><img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'></div>" +
-                "                    <div class=''>Дата комментария: "+elem.pubDate+"</div>\n" +
+                "                    <div class='align-self-start flex-grow '>№"+curIndex+"    Автор: <a href='/authors/"+elem.authorId+"/'>"+elem.authorName+"</a><img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'></div>" +
+                "                    <div class=''>Дата комментария: "+elem.created_at+"</div>\n" +
                 "                </div>\n" +
                 "                <div class='col-10'>\n" +
                 "                    <div class='container'>\n" +
@@ -130,7 +130,7 @@ function getPostComments(postId) {
                 "                            <div class='card'>\n" +
                 "                                <input type='checkbox' checked data-more-checker='card-read-more-checker' id='card-read-more-checker-"+curIndex+"'/>\n" +
                 "                                <div class='card-body'>\n" +
-                "                                    <p>"+elem.text+"</p>\n" +
+                "                                    <p>"+elem.body+"</p>\n" +
                 "                                    <div class='card-bottom'>\n" +
                 "                                    </div>\n" +
                 "                                </div>\n" +
@@ -161,12 +161,12 @@ function getPostComments(postId) {
 }
 
 function getPostInfo(postId) {
-    querystring = "/posts/getPosts/"+postId;
+    querystring = "/posts/"+postId;
 
     $.get(querystring).done(function (data) {
-        let avatarField = "<img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'>";
+        let avatarField = "<img class='avatar' src='"+data.iconPath+"' alt='Аватар автора'>";
         let newElement = getPostElement(data, 0, avatarField);
-        $(".row.post").append($(newElement));
+        $(".row.post").replaceWith($(newElement));
     });
 }
 

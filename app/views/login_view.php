@@ -2,7 +2,7 @@
     <div class="container bg-light">
         <form method="post" id="login-form">
             <label for="login" class="form-label">Логин</label>
-            <input class="form-control" name="login" type="text" id="login" placeholder="Введите логин" required>
+            <input class="form-control" name="username" type="text" id="username" placeholder="Введите логин" required>
             <div class="clearfix"></div>
             <label for="password" class="form-label">Пароль</label>
             <input class="form-control" name="password" type="password" id="password" placeholder="Введите пароль" required>
@@ -20,7 +20,7 @@
 </section>
 
 <script>
-    $("#login").keydown(function (e) {
+    $("#username").keydown(function (e) {
         if (!e.key.match(/\w/gi))
         {
             return false;

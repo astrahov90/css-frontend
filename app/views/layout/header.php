@@ -24,8 +24,8 @@
             <li <?php if (isset($authors)) echo'class="active"'?>>
                 <a href="/authors/">Авторы</a>
             </li>
-            <?php if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized']): ?>
-            <li <?php if (isset($newPost)) echo'class="active"'?>>
+            <?php if (isset($_SESSION['isAuthorized']) && $_SESSION['isAuthorized']): ?>
+            <li <?php if (isset($newPost)) echo'class="active"'?> >
                 <a href="/?newPost">Новый пост</a>
             </li>
             <?php endif ?>

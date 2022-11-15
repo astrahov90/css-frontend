@@ -11,7 +11,7 @@ function getUserElement(elem) {
         "                                    <div class='container-fluid'>\n" +
         "                                        <div class='row'>\n" +
         "                                            <div class='col-4 fw-bold'>"+elem.authorName+"</div>\n" +
-        "                                            <div class='col-4 offset-4'>Дата регистрации: "+elem.signDate+"</div>\n" +
+        "                                            <div class='col-4 offset-4'>Дата регистрации: "+elem.created_at+"</div>\n" +
         "                                        </div>\n" +
         "                                    </div>\n" +
         "                                </div>\n" +

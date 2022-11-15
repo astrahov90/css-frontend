@@ -3,27 +3,27 @@
 class Model_Posts extends \core\Model {
 
     const QUERY_BASE = "SELECT
-        posts.id, posts.title, posts.text, posts.pubDate, users.id as authorId, users.name as authorName, users.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count, IFNULL(comments.comments_count,0) as comments_count
+        posts.id, posts.title, posts.body, posts.created_at, user.id as authorId, user.username as authorName, user.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count, IFNULL(comments.comments_count,0) as comments_count
         FROM posts
-        LEFT JOIN (SELECT post, SUM(rating) as likes_count FROM posts_likes GROUP BY post) as posts_likes ON posts.id=posts_likes.post
-        LEFT JOIN (SELECT post, COUNT(id) as comments_count FROM comments GROUP BY post) as comments ON posts.id=comments.post
-        INNER JOIN users ON posts.author=users.id WHERE TRUE
+        LEFT JOIN (SELECT post_id, SUM(rating) as likes_count FROM posts_likes GROUP BY post_id) as posts_likes ON posts.id=posts_likes.post_id
+        LEFT JOIN (SELECT post_id, COUNT(id) as comments_count FROM comments GROUP BY post_id) as comments ON posts.id=comments.post_id
+        INNER JOIN user ON posts.author_id=user.id WHERE TRUE
         ORDER BY :order
         LIMIT 5 OFFSET :offset";
 
     private function getPage($offset=0, $newest=false, $id=null){
 
-        $order = "likes_count DESC, pubDate DESC";
+        $order = "likes_count DESC, posts.created_at DESC";
 
         if ($newest)
         {
-            $order = "pubDate DESC";
+            $order = "posts.created_at DESC";
         }
 
         $queryString = str_replace(":order",$order,self::QUERY_BASE);
         $query = $this->pdo->prepare($queryString);
         if ($id){
-            $queryString = str_replace("WHERE TRUE","WHERE posts.author=:id",$queryString);
+            $queryString = str_replace("WHERE TRUE","WHERE posts.author_id=:id",$queryString);
             $query = $this->pdo->prepare($queryString);
             $query->bindParam("id", $id);
         }
@@ -35,9 +35,9 @@ class Model_Posts extends \core\Model {
         $posts = $query->fetchAll(\PDO::FETCH_ASSOC);
 
         $posts = array_map(function ($elem){
-            $elem["pubDate"] = date("d.m.Y H:i:s", $elem["pubDate"]);
+            $elem["created_at"] = date("d.m.Y H:i:s", $elem["created_at"]);
             $elem["comments_count_text"] = $elem["comments_count"]." ".$this->getCommentSuffix($elem["comments_count"]);
-            $elem["text"] = $this->bbCodeDecode($elem["text"]);
+            $elem["body"] = $this->bbCodeDecode($elem["body"]);
             return $elem;
         },$posts);
 
@@ -51,7 +51,7 @@ class Model_Posts extends \core\Model {
 
         if ($id)
         {
-            $query = "SELECT COUNT(id) FROM posts WHERE author=:id";
+            $query = "SELECT COUNT(id) FROM posts WHERE author_id=:id";
             $postsCount = $this->pdo->prepare($query);
             $postsCount->bindParam("id", $id);
         }
@@ -92,9 +92,9 @@ class Model_Posts extends \core\Model {
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["pubDate"] = date("d.m.Y H:i:s", $info["pubDate"]);
+        $info["created_at"] = date("d.m.Y H:i:s", $info["created_at"]);
         $info["comments_count_text"] = $info["comments_count"]." ".$this->getCommentSuffix($info["comments_count"]);
-        $info["text"] = $this->bbCodeDecode($info["text"]);
+        $info["body"] = $this->bbCodeDecode($info["body"]);
 
         return $info;
     }
@@ -119,16 +119,15 @@ class Model_Posts extends \core\Model {
         }
     }
 
-    public function addPost($authorId, $title, $text){
-        $queryString = "INSERT INTO posts (author, title, text, pubDate) VALUES (:authorId, :title, :text, :pubDate);";
+    public function addPost($author_id, $title, $body){
+        $queryString = "INSERT INTO posts (author_id, title, body, created_at) VALUES (:author_id, :title, :body, :created_at);";
 
         $query = $this->pdo->prepare($queryString);
 
         $query->bindParam("title", $title);
-        $query->bindParam("authorId", $authorId);
-        $query->bindParam("text", $text);
-
-        $query->bindValue("pubDate", time());
+        $query->bindParam("author_id", $author_id);
+        $query->bindParam("body", $body);
+        $query->bindValue("created_at", time());
 
         $query->execute();
 
@@ -137,21 +136,21 @@ class Model_Posts extends \core\Model {
         return $postId;
     }
 
-    public function addPostLike($authorId, $postId, $like){
-        $queryString = "INSERT INTO posts_likes (author, post, rating) VALUES (:authorId, :postId, :rating);";
+    public function addPostLike($author_id, $post_id, $like){
+        $queryString = "INSERT INTO posts_likes (author_id, post_id, rating) VALUES (:author_id, :post_id, :rating);";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("postId", $postId);
-        $query->bindParam("authorId", $authorId);
+        $query->bindParam("post_id", $post_id);
+        $query->bindParam("author_id", $author_id);
         $query->bindValue("rating", ($like?1:-1));
         $query->execute();
 
-        $queryString = "SELECT SUM(rating) AS likes_count FROM posts_likes WHERE post=:postId;";
+        $queryString = "SELECT SUM(rating) AS likes_count FROM posts_likes WHERE post_id=:post_id;";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("postId", $postId);
+        $query->bindParam("post_id", $post_id);
         $query->execute();
 
         $row = $query->fetch(\PDO::FETCH_ASSOC);
@@ -159,13 +158,13 @@ class Model_Posts extends \core\Model {
         return $row['likes_count'];
     }
 
-    public function checkPostRating($authorId, $postId){
-        $queryString = "SELECT id FROM posts_likes WHERE author=:authorId AND post=:postId;";
+    public function checkPostRating($author_id, $post_id){
+        $queryString = "SELECT id FROM posts_likes WHERE author_id=:author_id AND post_id=:post_id;";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("postId", $postId);
-        $query->bindParam("authorId", $authorId);
+        $query->bindParam("post_id", $post_id);
+        $query->bindParam("author_id", $author_id);
 
         $query->execute();
 

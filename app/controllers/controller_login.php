@@ -12,13 +12,13 @@ class Controller_Login extends \core\Controller
     function action_index()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_REQUEST["login"]) && isset($_REQUEST["password"]))
+            if (isset($_REQUEST["username"]) && isset($_REQUEST["password"]))
             {
-                $userData = $this->model->getUser($_REQUEST["login"]);
-                if (password_verify($_REQUEST["password"], $userData['password'])){
+                $userData = $this->model->getUser($_REQUEST["username"]);
+                if (password_verify($_REQUEST["password"], $userData['password_hash'])){
                     $_SESSION["isAuthorized"] = true;
                     $_SESSION["userId"] = $userData["id"];
-                    $_SESSION["userName"] = $userData["name"];
+                    $_SESSION["userName"] = $userData["username"];
 
                     $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 
@@ -74,9 +74,10 @@ class Controller_Login extends \core\Controller
     function action_register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_REQUEST["login"]) && isset($_REQUEST["password"]) && isset($_REQUEST["password_again"]) && isset($_REQUEST["name"]) && isset($_REQUEST["description"]))
+            if (isset($_REQUEST["username"]) && isset($_REQUEST["password"]) && isset($_REQUEST["password_again"])
+                && isset($_REQUEST["email"]) && isset($_REQUEST["description"]))
             {
-                $checkUser = $this->model->getUser($_REQUEST["login"]);
+                $checkUser = $this->model->getUser($_REQUEST["username"]);
 
                 if ($checkUser!==false){
                     $data = [];
@@ -85,11 +86,11 @@ class Controller_Login extends \core\Controller
                     die();
                 }
 
-                $newUser = $this->model->addUser($_REQUEST['login'], password_hash($_REQUEST['password'], PASSWORD_DEFAULT),$_REQUEST['name'],$_REQUEST['description']);
+                $newUser = $this->model->addUser($_REQUEST['username'], $_REQUEST['password'],$_REQUEST['email'],$_REQUEST['description']);
 
                 $_SESSION["isAuthorized"] = true;
                 $_SESSION["userId"] = $newUser["id"];
-                $_SESSION["userName"] = $newUser["name"];
+                $_SESSION["userName"] = $newUser["username"];
 
                 $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']."/profile/";
 
