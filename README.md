@@ -42,4 +42,9 @@ docker-compose.yml       содержит описание сборки docker-c
 
 Сайт будет доступен по <a href="http://localhost:20080">ссылке</a>.
 
+Для начального заполнения используются сервисы <a href="https://api.randomdatatools.ru"> randomDataTools </a>
+(генерирование данных пользователей), <a href="https://api.multiavatar.com/"> multiAvatar </a>
+(генерирование уникальных аватаров), <a href="https://fish-text.ru/api/"> Фиштекст </a>
+(генерирование заголовков и текстов).
+
 Пользователь администратора - admin 12346578.
