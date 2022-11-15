@@ -38,15 +38,7 @@ docker-compose.yml       содержит описание сборки docker-c
 
 Для быстрого старта требуется клонировать репозиторий командой git clone.
 
-Далее требуется выполнить команды php init.php prepareSQLite для создания файла БД.
-
-Опционально для первоначального заполнения можно использовать команду php init.php prepareSampleData.
-Для начального заполнения используются сервисы <a href="https://api.randomdatatools.ru"> randomDataTools </a>
-(генерирование данных пользователей), <a href="https://api.multiavatar.com/"> multiAvatar </a>
-(генерирование уникальных аватаров), <a href="https://fish-text.ru/api/"> Фиштекст </a>
-(генерирование заголовков и текстов).
-
-Для запуска контейнера используйте команду docker compose up -d.
+Для запуска контейнера в корневой директории используйте команду docker compose up -d.
 
 Сайт будет доступен по <a href="http://localhost:20080">ссылке</a>.
 
