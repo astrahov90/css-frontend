@@ -5,24 +5,21 @@ error_reporting(E_ERROR | E_PARSE);
 session_start();
 include 'core/config.php';
 
-spl_autoload_register(function($className) {
-    $path = __DIR__ . '/'  . $className . '.php';
-    $path = str_replace("\\",DIRECTORY_SEPARATOR, $path);
+spl_autoload_register(function ($className) {
+    $path = __DIR__ . '/' . $className . '.php';
+    $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
     if (is_file($path)) {
         require_once $path;
     }
 });
 
 $pdo = null;
-try
-{
+try {
     $pdo = (new \db\SQLiteConnection())->connect();
     if ($pdo == null)
         throw new \HttpException();
 
-}
-catch (\Exception $e)
-{
+} catch (\Exception $e) {
 
 }
 
@@ -38,7 +35,7 @@ function render_template($template, $params)
     extract($params);
 
     ob_start();
-    include ($template);
+    include($template);
     $result = ob_get_contents();
     ob_end_clean();
 

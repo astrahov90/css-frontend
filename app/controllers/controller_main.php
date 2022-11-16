@@ -6,16 +6,15 @@ class Controller_Main extends \core\Controller
     {
         $data = [];
 
-        if (isset($_REQUEST["newPost"])){
+        if (isset($_REQUEST["newPost"])) {
             $data['newPost'] = true;
             $this->view->generate('app/views/newpost_view.php', "template_view.php", $data);
             die();
-        }
-        else {
+        } else {
             if (isset($_REQUEST["newest"]))
-            $data['newest'] = true;
-        else
-            $data['best'] = true;
+                $data['newest'] = true;
+            else
+                $data['best'] = true;
 
             $this->view->generate('app/views/posts_view.php', "template_view.php", $data);
         }

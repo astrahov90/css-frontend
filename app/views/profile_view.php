@@ -14,7 +14,8 @@
                                 <div class='container-fluid'>
                                     <div class='row'>
                                         <div class='col-4 fw-bold'><?php echo $author['name'] ?></div>
-                                        <div class='col-3 offset-5'>Дата регистрации: <?php echo $author['signDate'] ?></div>
+                                        <div class='col-3 offset-5'>Дата
+                                            регистрации: <?php echo $author['signDate'] ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -24,7 +25,8 @@
                                     <div class="mt-1">
                                         <label for="formFile" class="form-label">Изменить аватар</label>
                                         <div class='clearfix'></div>
-                                        <input class="form-control" type="file" id="formFile" name="avatar" accept="image/jpeg, image/png">
+                                        <input class="form-control" type="file" id="formFile" name="avatar"
+                                               accept="image/jpeg, image/png">
                                         <div class='clearfix'></div>
                                         <button type="submit" class="btn btn-primary mt-1">Сохранить</button>
                                     </div>

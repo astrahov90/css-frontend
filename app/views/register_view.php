@@ -6,16 +6,20 @@
             <input class="form-control" name="username" type="text" id="username" placeholder="Введите логин" required>
             <div class="clearfix"></div>
             <label for="password" class="form-label">Пароль</label>
-            <input class="form-control" name="password" type="password" id="password" placeholder="Введите пароль" required>
+            <input class="form-control" name="password" type="password" id="password" placeholder="Введите пароль"
+                   required>
             <div class="clearfix"></div>
             <label for="password" class="form-label">Пароль еще раз</label>
-            <input class="form-control" name="password_again" type="password" id="password_again" placeholder="Повторите пароль" required>
+            <input class="form-control" name="password_again" type="password" id="password_again"
+                   placeholder="Повторите пароль" required>
             <div class="clearfix"></div>
             <label for="name" class="form-label">Электронная почта</label>
-            <input class="form-control" name="email" type="email" id="email" placeholder="Введите электронную почту" required>
+            <input class="form-control" name="email" type="email" id="email" placeholder="Введите электронную почту"
+                   required>
             <div class="clearfix"></div>
             <label for="description" class="form-label">О себе</label>
-            <input class="form-control" name="description" type="text" id="description" placeholder="Кратко о себе" required>
+            <input class="form-control" name="description" type="text" id="description" placeholder="Кратко о себе"
+                   required>
             <div class="clearfix"></div>
             <div class="btn-group">
                 <button type="submit" class='btn btn-primary mt-2'>Зарегистрироваться</button>
@@ -30,15 +34,13 @@
 
 <script>
     $("#username").keydown(function (e) {
-        if (!e.key.match(/\w/gi))
-        {
+        if (!e.key.match(/\w/gi)) {
             return false;
         }
     });
 
     $("#password,#password_again").keydown(function (e) {
-        if (!e.key.match(/\w/gi))
-        {
+        if (!e.key.match(/\w/gi)) {
             return false;
         }
     });
@@ -66,10 +68,10 @@
                 equalTo: "Пароли должны совпадать"
             }
         },
-        submitHandler: function(form) {
+        submitHandler: function (form) {
             if (form.valid())
                 return false;
-                form.submit();
+            form.submit();
         }
     });
 </script>

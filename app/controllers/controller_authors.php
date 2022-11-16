@@ -9,10 +9,9 @@ class Controller_Authors extends \core\Controller
         $this->view = new \core\View();
     }
 
-    function action_index($model_id=null)
+    function action_index($model_id = null)
     {
-        if (isset($model_id))
-        {
+        if (isset($model_id)) {
             $result = $this->model->getAuthorInfo($model_id);
             header('Content-Type: application/json; charset=utf-8');
             die(json_encode($result));
@@ -24,7 +23,8 @@ class Controller_Authors extends \core\Controller
         $this->view->generate('app/views/authors_view.php', "template_view.php", $data);
     }
 
-    function action_getUsers(){
+    function action_getUsers()
+    {
 
         $offset = 0;
         if (isset($_REQUEST["offset"]))

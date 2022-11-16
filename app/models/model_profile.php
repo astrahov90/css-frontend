@@ -1,11 +1,13 @@
 <?php
 
-class Model_Profile extends \core\Model {
+class Model_Profile extends \core\Model
+{
 
     const QUERY_BASE = "SELECT
         * from user WHERE id=:id";
 
-    public function getUserInfo($userId){
+    public function getUserInfo($userId)
+    {
 
         $queryString = self::QUERY_BASE;
         $query = $this->pdo->prepare($queryString);
@@ -15,12 +17,13 @@ class Model_Profile extends \core\Model {
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["created_at"] = date("d.m.Y", $info["created_at"]/1000);
+        $info["created_at"] = date("d.m.Y", $info["created_at"] / 1000);
 
         return $info;
     }
 
-    public function updateUserAvatar($id, $uploadedFile){
+    public function updateUserAvatar($id, $uploadedFile)
+    {
 
         $queryString = "UPDATE user SET iconPath=:iconPath, updated_at=:updated_at WHERE id=:id";
 

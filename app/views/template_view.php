@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $title?></title>
+    <title><?php echo $title ?></title>
     <link rel="stylesheet" href="/assets/css/reset.css">
     <!--<link href="/assets/css/bootstrap.css" rel="stylesheet">
     <script defer src="/assets/js/bootstrap.bundle.js"></script>-->

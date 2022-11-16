@@ -21,7 +21,7 @@
     mortPostsBtn.hide();
 
     $(".card-read-more-button").click(function (e) {
-        if ($("#"+$(this).attr("for")).is(":not(:checked)")){
+        if ($("#" + $(this).attr("for")).is(":not(:checked)")) {
             scrollIntoViewIfNeeded($(e.target));
         }
     });

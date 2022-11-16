@@ -1,13 +1,15 @@
 <?php
 
-class Model_Login extends \core\Model {
+class Model_Login extends \core\Model
+{
 
     const QUERY_BASE = "SELECT
         user.id, user.username, user.password_hash
         FROM user
         WHERE username=:username";
 
-    public function getUser($username){
+    public function getUser($username)
+    {
         $queryString = self::QUERY_BASE;
         $query = $this->pdo->prepare($queryString);
 
@@ -18,7 +20,8 @@ class Model_Login extends \core\Model {
         return $info;
     }
 
-    public function addUser($username, $password, $email, $description){
+    public function addUser($username, $password, $email, $description)
+    {
         $queryString = "-- auto-generated definition
                 INSERT INTO user 
                 (username, auth_key, password_hash, password_reset_token, email,
@@ -29,7 +32,7 @@ class Model_Login extends \core\Model {
         $query = $this->pdo->prepare($queryString);
         $query->bindParam('username', $username);
         $query->bindValue('auth_key', substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32));
-        $query->bindParam('password_hash', password_hash($password,PASSWORD_DEFAULT));
+        $query->bindParam('password_hash', password_hash($password, PASSWORD_DEFAULT));
         $query->bindValue('password_reset_token', substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32) . '_' . time());
         $query->bindParam('email', $email);
         $query->bindValue('status', 10);

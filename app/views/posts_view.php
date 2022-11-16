@@ -3,7 +3,7 @@
         <div class="loaderBody bg-light">
             <div id="loader"></div>
         </div>
-    <label class="morePosts">Еще...</label>
+        <label class="morePosts">Еще...</label>
     </div>
 </section>
 
@@ -16,7 +16,7 @@
     morePostsBtn.hide();
 
     $(".card-read-more-button").click(function (e) {
-        if ($("#"+$(this).attr("for")).is(":not(:checked)")){
+        if ($("#" + $(this).attr("for")).is(":not(:checked)")) {
             scrollIntoViewIfNeeded($(e.target));
         }
     });
@@ -33,9 +33,11 @@
                     window.innerHeight || document.documentElement.clientHeight
                 )) {
                 //scroll down
-                $("html,body").animate({scrollTop: targetFullPosition -
-                (window.innerHeight || document.documentElement.clientHeight)
-                + $target.height() + 15}
+                $("html,body").animate({
+                        scrollTop: targetFullPosition -
+                        (window.innerHeight || document.documentElement.clientHeight)
+                        + $target.height() + 15
+                    }
                 );
             }
         }

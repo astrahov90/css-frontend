@@ -2,13 +2,14 @@
 
 namespace core;
 
-class Controller {
+class Controller
+{
 
     public $model;
     public $view;
 
 
-    function __construct($pdo=null)
+    function __construct($pdo = null)
     {
         $this->view = new View();
     }

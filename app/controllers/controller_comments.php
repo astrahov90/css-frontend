@@ -1,7 +1,6 @@
 <?php
 
 
-
 class Controller_Comments extends \core\Controller
 {
     function __construct($pdo)
@@ -11,7 +10,8 @@ class Controller_Comments extends \core\Controller
         $this->view = new \core\View();
     }
 
-    function action_getCommentsByPost(){
+    function action_getCommentsByPost()
+    {
 
         $offset = 0;
         if (isset($_REQUEST["offset"]))
@@ -23,15 +23,16 @@ class Controller_Comments extends \core\Controller
         die(json_encode($result));
     }
 
-    function action_addCommentToPost(){
+    function action_addCommentToPost()
+    {
         $postId = $_REQUEST["id"];
         $comment = $_REQUEST["comment"];
         $author = $_SESSION["userId"];
 
         $this->model->addCommentToPost($postId, $author, $comment);
 
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']."/posts/".$postId."/comments/";
-        header("Location: ".$url);
+        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/posts/" . $postId . "/comments/";
+        header("Location: " . $url);
     }
 
 }

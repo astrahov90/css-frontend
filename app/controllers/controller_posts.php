@@ -1,7 +1,6 @@
 <?php
 
 
-
 class Controller_Posts extends \core\Controller
 {
     function __construct($pdo)
@@ -11,7 +10,8 @@ class Controller_Posts extends \core\Controller
         $this->view = new \core\View();
     }
 
-    function action_getPosts(){
+    function action_getPosts()
+    {
 
         $offset = 0;
         if (isset($_REQUEST["offset"]))
@@ -21,12 +21,9 @@ class Controller_Posts extends \core\Controller
         if (isset($_REQUEST["newest"]))
             $newest = true;
 
-        if (isset($_REQUEST["authorId"]))
-        {
+        if (isset($_REQUEST["authorId"])) {
             $result = $this->model->getByAuthor($offset, $_REQUEST["authorId"]);
-        }
-        else
-        {
+        } else {
             $result = $this->model->get_data($offset, $newest);
         }
 
@@ -35,10 +32,9 @@ class Controller_Posts extends \core\Controller
     }
 
 
-    function action_index($model_id=null)
+    function action_index($model_id = null)
     {
-        if (isset($model_id))
-        {
+        if (isset($model_id)) {
             $result = $this->model->getPostInfo($model_id);
             header('Content-Type: application/json; charset=utf-8');
             die(json_encode($result));
@@ -55,7 +51,8 @@ class Controller_Posts extends \core\Controller
         $this->view->generate('app/views/comments_view.php', "template_view.php", $data);
     }
 
-    function action_getComments(){
+    function action_getComments()
+    {
 
         $offset = 0;
         if (isset($_REQUEST["offset"]))
@@ -67,23 +64,26 @@ class Controller_Posts extends \core\Controller
         die(json_encode($result));
     }
 
-    function action_addPost(){
+    function action_addPost()
+    {
         $title = $_REQUEST["title"];
         $text = $_REQUEST["text"];
         $author = $_SESSION["userId"];
 
         $postId = $this->model->addPost($author, $title, $text);
 
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']."/posts/".$postId."/comments/";
-        header("Location: ".$url);
+        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/posts/" . $postId . "/comments/";
+        header("Location: " . $url);
     }
 
-    function action_postLike($postId){
+    function action_postLike($postId)
+    {
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, true);
     }
 
-    function action_postDisLike($postId){
+    function action_postDisLike($postId)
+    {
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, false);
 
@@ -94,11 +94,9 @@ class Controller_Posts extends \core\Controller
         $ratingSet = $this->model->checkPostRating($authorId, $postId);
 
         $result = [];
-        if ($ratingSet)
-        {
+        if ($ratingSet) {
             $result['error'] = "Оценка уже выставлена";
-        }
-        else {
+        } else {
             $ratingCount = $this->model->addPostLike($authorId, $postId, $like);
             $result['ratingCount'] = $ratingCount;
         }

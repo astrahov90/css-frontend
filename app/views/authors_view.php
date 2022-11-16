@@ -3,7 +3,7 @@
         <div class="loaderBody bg-light">
             <div id="loader"></div>
         </div>
-    <label class="moreAuthors">Еще...</label>
+        <label class="moreAuthors">Еще...</label>
     </div>
 </section>
 

@@ -15,19 +15,19 @@
     </div>
     <nav>
         <ul>
-            <li <?php if (isset($best)) echo'class="active"'?>>
+            <li <?php if (isset($best)) echo 'class="active"' ?>>
                 <a href="/?best">Лучшее</a>
             </li>
-            <li <?php if (isset($newest)) echo'class="active"'?>>
+            <li <?php if (isset($newest)) echo 'class="active"' ?>>
                 <a href="/?newest">Свежее</a>
             </li>
-            <li <?php if (isset($authors)) echo'class="active"'?>>
+            <li <?php if (isset($authors)) echo 'class="active"' ?>>
                 <a href="/authors/">Авторы</a>
             </li>
             <?php if (isset($_SESSION['isAuthorized']) && $_SESSION['isAuthorized']): ?>
-            <li <?php if (isset($newPost)) echo'class="active"'?> >
-                <a href="/?newPost">Новый пост</a>
-            </li>
+                <li <?php if (isset($newPost)) echo 'class="active"' ?> >
+                    <a href="/?newPost">Новый пост</a>
+                </li>
             <?php endif ?>
         </ul>
     </nav>

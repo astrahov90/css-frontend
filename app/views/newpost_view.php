@@ -8,20 +8,30 @@
                 <div class="clearfix"></div>
                 <input type="text" class="form-control" name="title" placeholder="Введите заголовок поста">
                 <div class="btn-group mt-2 mb-2" role="group">
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-bold" title="Полужирный"><span style="font-weight: bold">B</span></button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-italic" title="Курсив"><span style="font-style: italic">I</span></button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-underline" title="Подчеркнутый"><span style="text-decoration: underline">U</span></button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-line-through" title="Зачеркнутый"><span style="text-decoration: line-through">S</span></button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-quote" title="Цитирование"><span style="font-weight: bold">""</span></button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-url" title="Гиперссылка">url</button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-img" title="Изображение">img</button>
-                    <button type="button" class="btn btn-outline-primary bbcode" id="text-color" title="Цвет текста">color</button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-bold" title="Полужирный"><span
+                                style="font-weight: bold">B</span></button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-italic" title="Курсив"><span
+                                style="font-style: italic">I</span></button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-underline"
+                            title="Подчеркнутый"><span style="text-decoration: underline">U</span></button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-line-through"
+                            title="Зачеркнутый"><span style="text-decoration: line-through">S</span></button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-quote" title="Цитирование">
+                        <span style="font-weight: bold">""</span></button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-url" title="Гиперссылка">url
+                    </button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-img" title="Изображение">img
+                    </button>
+                    <button type="button" class="btn btn-outline-primary bbcode" id="text-color" title="Цвет текста">
+                        color
+                    </button>
                     <input type="color" class="btn btn-outline-primary" id="text-color-select" title="Цвет">
                 </div>
                 <textarea class="form-control" name="text" id="post" placeholder="Текст поста" required></textarea>
                 <div class="clearfix"></div>
                 <button class="btn btn-outline-primary mt-2" type="submit">Отправить</button>
-                <button class="btn btn-outline-primary mt-2" type="button" id="preview">Предварительный просмотр</button>
+                <button class="btn btn-outline-primary mt-2" type="button" id="preview">Предварительный просмотр
+                </button>
             </form>
             <div id="preview-data">
                 <label for="preview-data">Предпросмотр комментария</label>
@@ -53,39 +63,55 @@
         let url;
         let color;
 
-        switch ($(this).attr('id')){
-            case "text-bold": tag = 'b'; break;
-            case "text-italic": tag = 'i'; break;
-            case "text-underline": tag = 'u'; break;
-            case "text-line-through": tag = 's'; break;
-            case "text-quote": tag = 'quote'; break;
-            case "text-url": tag = 'url'; break;
-            case "text-img": tag = 'img'; break;
-            case "text-color": tag = 'color'; break;
+        switch ($(this).attr('id')) {
+            case "text-bold":
+                tag = 'b';
+                break;
+            case "text-italic":
+                tag = 'i';
+                break;
+            case "text-underline":
+                tag = 'u';
+                break;
+            case "text-line-through":
+                tag = 's';
+                break;
+            case "text-quote":
+                tag = 'quote';
+                break;
+            case "text-url":
+                tag = 'url';
+                break;
+            case "text-img":
+                tag = 'img';
+                break;
+            case "text-color":
+                tag = 'color';
+                break;
         }
 
-        if (tag==="url"){
+        if (tag === "url") {
             url = prompt("Введите url");
-            if (!url){
+            if (!url) {
                 return false;
             }
         }
 
-        if (tag==="img"){
+        if (tag === "img") {
             url = prompt("Введите ссылку на изображение");
-            if (!url){
+            if (!url) {
                 return false;
             }
             curSelectionStart = curSelectionEnd;
         }
 
-        if (tag==="color"){
+        if (tag === "color") {
             color = $("#text-color-select").val();
         }
 
-        let curSelection = "["+tag+(curSelectionStart!==curSelectionEnd&&url?"="+url:"")+(color?"='"+color+"'":"")+"]" + (curSelectionStart===curSelectionEnd&&url?url:curText.slice(curSelectionStart, curSelectionEnd)) + "[/"+tag+"]";
+        let curSelection = "[" + tag + (curSelectionStart !== curSelectionEnd && url ? "=" + url : "") + (color ? "='" + color + "'" : "") + "]" + (curSelectionStart === curSelectionEnd && url ? url : curText.slice(curSelectionStart, curSelectionEnd)) + "[/" + tag + "]";
 
-        curText = curText.slice(0,curSelectionStart) + curSelection + curText.slice(curSelectionEnd);
+        curText = curText.slice(0, curSelectionStart) + curSelection + curText.slice(curSelectionEnd);
 
         $("#post").val(curText);
     });
