@@ -6,6 +6,10 @@
         <div class="loaderBody bg-light">
             <div id="loader"></div>
         </div>
+        <div class='clearfix'></div>
+        <div class="row mt-2 hasPosts">
+            <div class="col-12 fw-bold">Посты пользователя:</div>
+        </div>
         <label class="morePosts">Еще...</label>
     </div>
 </section>

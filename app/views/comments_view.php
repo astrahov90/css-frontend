@@ -10,7 +10,7 @@
         </div>
         <div class='clearfix'></div>
         <div class="row mt-2 hasComments">
-            <div class="col-12">Комментарии пользователей:</div>
+            <div class="col-12 fw-bold">Комментарии пользователей:</div>
         </div>
         <label class="moreComments">Еще...</label>
         <?php if (!$_SESSION['isAuthorized']): ?>
@@ -88,9 +88,6 @@
     $(document).ready(function () {
         getPostInfo(postId);
         getPostComments(postId);
-        if ($(".row.comment").length > 0) {
-            hasComments.show();
-        }
     });
 
     moreCommentsBtn.click(function () {

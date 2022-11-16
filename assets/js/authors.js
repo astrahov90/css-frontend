@@ -1,23 +1,23 @@
 function getUserElement(elem) {
     let newElement = "<div class='row authors'>\n" +
-        "                <div class='col-1'>\n" +
-        "                    <div class='container'><img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'></div>\n" +
+        "                <div class='col-2'>\n" +
+        "                    <div class='container'><img class='avatar pt-1' src='" + elem.iconPath + "' alt='Аватар автора'></div>\n" +
         "                </div>\n" +
-        "                <div class='col-10'>\n" +
+        "                <div class='col-9'>\n" +
         "                    <div class='container'>\n" +
         "                        <div class='row'>\n" +
         "                            <div class='card'>\n" +
         "                                <div class='card-title'>\n" +
         "                                    <div class='container-fluid'>\n" +
         "                                        <div class='row'>\n" +
-        "                                            <div class='col-4 fw-bold'>"+elem.authorName+"</div>\n" +
-        "                                            <div class='col-4 offset-4'>Дата регистрации: "+elem.created_at+"</div>\n" +
+        "                                            <div class='col-4 fw-bold'>" + elem.authorName + "</div>\n" +
+        "                                            <div class='col-4 offset-4'>Дата регистрации: " + elem.created_at + "</div>\n" +
         "                                        </div>\n" +
         "                                    </div>\n" +
         "                                </div>\n" +
         "                                <div class='card-body'>\n" +
-        "                                    <p> Количество постов автора: "+elem.posts_count +
-        "                                       <a href='/authors/"+elem.authorId+"/posts/'>Перейти</a></p>\n" +
+        "                                    <p> Количество постов автора: " + elem.posts_count +
+        "                                       <a href='/authors/" + elem.id + "/posts'>Перейти</a></p>\n" +
         "                                </div>\n" +
         "                                <div class='card-bottom'></div>\n" +
         "                            </div>\n" +
@@ -55,6 +55,6 @@ function getUserInfo(authorId) {
     $.get("/authors/"+authorId).done(function (data) {
         console.log(data);
         let newElement = getUserElement(data);
-        $(".row.authors").append($(newElement));
+        $(".row.authors").replaceWith($(newElement));
     });
 }

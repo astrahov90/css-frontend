@@ -115,3 +115,25 @@
 .flex-grow {
     flex-grow: 1;
 }
+
+.comment {
+    margin-top: 2rem;
+}
+
+.hasComments + .comment {
+    margin-top: initial;
+}
+
+.hasPosts + .post {
+    margin-top: initial;
+}
+
+.hasComments {
+    padding: 1em 0;
+    font-weight: bold;
+}
+
+.hasPosts {
+    padding: 1em 0;
+    font-weight: bold;
+}
