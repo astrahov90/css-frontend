@@ -6,28 +6,13 @@ class Router
 {
     static function start($pdo)
     {
-        $controller_name = 'Main';
-        $action_name = 'index';
-        $model_id = null;
+        $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-        $routes = explode('/', parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
+        preg_match('/\/(?P<controller>\w+)\/((?P<id>\d*)\/)?((?P<action>\w*)\/?)?/', $uri, $matches);
 
-        if (!empty($routes[1])) {
-            $controller_name = $routes[1];
-        }
-
-        if (!empty($routes[2])) {
-            if (is_numeric($routes[2]))
-                $model_id = $routes[2];
-            else
-                $action_name = $routes[2];
-        }
-
-        if (!empty($routes[3])
-            && is_numeric($routes[2])) {
-            $model_id = $routes[2];
-            $action_name = $routes[3];
-        }
+        $controller_name = $matches['controller']?:'Main';
+        $model_id = $matches['id']?:null;
+        $action_name = $matches['action']?:'index';
 
         $model_name = 'Model_' . $controller_name;
         $controller_name = 'Controller_' . $controller_name;
