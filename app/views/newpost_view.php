@@ -27,7 +27,7 @@
                     </button>
                     <input type="color" class="btn btn-outline-primary" id="text-color-select" title="Цвет">
                 </div>
-                <textarea class="form-control" name="text" id="post" placeholder="Текст поста" required></textarea>
+                <textarea class="form-control" name="body" id="post" placeholder="Текст поста" required></textarea>
                 <div class="clearfix"></div>
                 <button class="btn btn-outline-primary mt-2" type="submit">Отправить</button>
                 <button class="btn btn-outline-primary mt-2" type="button" id="preview">Предварительный просмотр

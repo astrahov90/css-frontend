@@ -13,20 +13,27 @@ class Controller_Posts extends \core\Controller
     function action_getPosts()
     {
 
-        $offset = 0;
-        if (isset($_REQUEST["offset"]))
-            $offset = $_REQUEST["offset"];
+        $offset = $_REQUEST["offset"]??0;
+        $newest = isset($_REQUEST["newest"])?true:false;
+        $authorId = $_REQUEST["authorId"]??null;
 
-        $newest = false;
-        if (isset($_REQUEST["newest"]))
-            $newest = true;
+        $result = $this->model->getList(compact(['offset','newest','authorId']));
 
-        if (isset($_REQUEST["authorId"])) {
-            $result = $this->model->getByAuthor($offset, $_REQUEST["authorId"]);
-        } else {
-            $result = $this->model->get_data($offset, $newest);
+        header('Content-Type: application/json; charset=utf-8');
+        die(json_encode($result));
+    }
+
+    function action_getPost()
+    {
+        $postId = $_REQUEST["postId"]??null;
+
+        if ($postId == null)
+        {
+            http_response_code(400);
+            die();
         }
 
+        $result = $this->model->get($postId);
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -34,19 +41,13 @@ class Controller_Posts extends \core\Controller
 
     function action_index($model_id = null)
     {
-        if (isset($model_id)) {
-            $result = $this->model->getPostInfo($model_id);
-            header('Content-Type: application/json; charset=utf-8');
-            die(json_encode($result));
-        }
-
         $this->view->generate('app/views/post_view.php', "template_view.php");
     }
 
     function action_comments($postId)
     {
         $data = [];
-        $data["post"] = $this->model->getPostInfo($postId);
+        $data["post"] = $this->model->get($postId);
 
         $this->view->generate('app/views/comments_view.php', "template_view.php", $data);
     }
@@ -67,10 +68,10 @@ class Controller_Posts extends \core\Controller
     function action_addPost()
     {
         $title = $_REQUEST["title"];
-        $text = $_REQUEST["text"];
-        $author = $_SESSION["userId"];
+        $body = $_REQUEST["body"];
+        $authorId = $_SESSION["userId"];
 
-        $postId = $this->model->addPost($author, $title, $text);
+        $postId = $this->model->create(compact(['title','body','authorId']));
 
         $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/posts/" . $postId . "/comments/";
         header("Location: " . $url);

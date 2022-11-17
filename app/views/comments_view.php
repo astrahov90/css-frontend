@@ -18,7 +18,7 @@
         <?php else: ?>
             <div class="mt-2">
                 <form method="post" action="/comments/addCommentToPost">
-                    <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
+                    <input type="hidden" name="postId" value="<?php echo $post['id'] ?>">
                     <label for="comment" class="form-label">Добавить комментарий</label>
                     <div class="clearfix"></div>
                     <div class="btn-group mt-2 mb-2" role="group">
@@ -43,7 +43,7 @@
                         </button>
                         <input type="color" class="btn btn-outline-primary" id="text-color-select" title="Цвет">
                     </div>
-                    <textarea class="form-control" name="comment" id="comment" placeholder="Текст комментария"
+                    <textarea class="form-control" name="body" id="comment" placeholder="Текст комментария"
                               required></textarea>
                     <div class="clearfix"></div>
                     <button class="btn btn-outline-primary mt-2" type="submit">Отправить</button>

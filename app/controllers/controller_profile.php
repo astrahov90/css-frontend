@@ -28,7 +28,7 @@ class Controller_Profile extends \core\Controller
         }
 
         $data = [];
-        $data['author'] = $this->model->getUserInfo($_SESSION['userId']);
+        $data['author'] = $this->model->get($_SESSION['userId']);
 
         $this->view->generate('app/views/profile_view.php', "template_view.php", $data);
     }

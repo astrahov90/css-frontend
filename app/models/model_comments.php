@@ -1,69 +1,79 @@
 <?php
 
-class Model_Comments extends \core\Model
+use core\interfaces\IModelCreate;
+use core\interfaces\IModelGetList;
+
+class Model_Comments extends \core\Model implements IModelGetList, IModelCreate
 {
 
     const QUERY_BASE = "SELECT
         comments.id, comments.post_id, comments.body, comments.created_at, user.id as authorId, user.username as authorName, user.iconPath
         FROM comments
-        INNER JOIN user ON comments.author_id=user.id WHERE comments.post_id=:id
+        INNER JOIN user ON comments.author_id=user.id WHERE comments.post_id=:postId
         ORDER BY comments.created_at
         LIMIT 5 OFFSET :offset";
 
-    private function getPage($offset = 0, $postId = null)
+    public function postWork($elem)
     {
+        $elem["created_at"] = date("d.m.Y H:i:s", $elem["created_at"]);
+        $elem["body"] = $this->bbCodeDecode($elem["body"]);
+        return $elem;
+    }
+
+    public function getPage(iterable $args)
+    {
+
+        $offset = $args['offset'];
+        $postId = $args['postId'];
 
         $queryString = self::QUERY_BASE;
-        $queryString = str_replace("WHERE TRUE", "WHERE posts.author_id=:id", $queryString);
         $query = $this->pdo->prepare($queryString);
-        $query->bindParam("id", $postId);
-
+        $query->bindParam("postId", $postId);
         $query->bindParam("offset", $offset);
-
         $query->execute();
 
-        $posts = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $comments = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        $posts = array_map(function ($elem) {
-            $elem["created_at"] = date("d.m.Y H:i:s", $elem["created_at"]);
-            $elem["body"] = $this->bbCodeDecode($elem["body"]);
-            return $elem;
-        }, $posts);
+        $comments = array_map([$this,'postWork'], $comments);
 
-        return $posts;
+        return $comments;
     }
 
-    private function getCount($post_id)
+    public function getCount(iterable $args)
     {
+        $postId = $args['postId'];
 
-        $query = "SELECT COUNT(id) FROM comments WHERE post_id=:id";
-        $CommentsCount = $this->pdo->prepare($query);
-        $CommentsCount->bindParam("id", $post_id);
-        $CommentsCount->execute();
-        $CommentsCount = $CommentsCount->fetchColumn();
+        $query = "SELECT COUNT(id) FROM comments WHERE post_id=:postId";
+        $commentsCount = $this->pdo->prepare($query);
+        $commentsCount->bindParam("postId", $postId);
+        $commentsCount->execute();
+        $commentsCount = $commentsCount->fetchColumn();
 
-        return $CommentsCount;
+        return $commentsCount;
     }
 
-    public function getCommentsByPost($offset = 0, $post_id)
+    public function getList(iterable $args)
     {
-
         $result = [];
-        $result["comments"] = $this->getPage($offset, $post_id);
-        $result["totalCount"] = $this->getCount($post_id);
-        $result["currentCount"] = $offset + count($result["comments"]);
+        $result["comments"] = $this->getPage($args);
+        $result["totalCount"] = $this->getCount($args);
+        $result["currentCount"] = $args['offset'] + count($result["comments"]);
 
         return $result;
     }
 
-    public function addCommentToPost($post_id, $author_id, $body)
+    public function create(iterable $args)
     {
-        $queryString = "INSERT INTO comments (post_id, author_id, body, created_at) VALUES (:post_id, :author_id, :body, :created_at)";
+        $postId = $args['postId'];
+        $body = $args['body'];
+        $authorId = $args['authorId'];
+
+        $queryString = "INSERT INTO comments (post_id, author_id, body, created_at) VALUES (:postId, :authorId, :body, :created_at)";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("post_id", $post_id);
-        $query->bindParam("author_id", $author_id);
+        $query->bindParam("postId", $postId);
+        $query->bindParam("authorId", $authorId);
         $query->bindParam("body", $body);
         $query->bindValue("created_at", time());
 

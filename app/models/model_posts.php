@@ -1,6 +1,10 @@
 <?php
 
-class Model_Posts extends \core\Model
+use core\interfaces\IModelCreate;
+use core\interfaces\IModelGet;
+use core\interfaces\IModelGetList;
+
+class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModelGetList
 {
 
     const QUERY_BASE = "SELECT
@@ -12,8 +16,30 @@ class Model_Posts extends \core\Model
         ORDER BY :order
         LIMIT 5 OFFSET :offset";
 
-    private function getPage($offset = 0, $newest = false, $id = null)
+    public function postWork($elem)
     {
+        $elem["created_at"] = date("d.m.Y H:i:s", $elem["created_at"]);
+        $elem["comments_count_text"] = $elem["comments_count"] . " " . $this->getCommentSuffix($elem["comments_count"]);
+        $elem["body"] = $this->bbCodeDecode($elem["body"]);
+        return $elem;
+    }
+
+    public function getList(iterable $args)
+    {
+        $result = [];
+        $result["posts"] = $this->getPage($args);
+        $result["totalCount"] = $this->getCount($args);
+        $result["currentCount"] = $args['offset'] + count($result["posts"]);
+
+        return $result;
+    }
+
+    public function getPage(iterable $args)
+    {
+
+        $offset = $args['offset'];
+        $newest = $args['newest'];
+        $authorId = $args['authorId'];
 
         $order = "likes_count DESC, posts.created_at DESC";
 
@@ -23,10 +49,10 @@ class Model_Posts extends \core\Model
 
         $queryString = str_replace(":order", $order, self::QUERY_BASE);
         $query = $this->pdo->prepare($queryString);
-        if ($id) {
-            $queryString = str_replace("WHERE TRUE", "WHERE posts.author_id=:id", $queryString);
+        if ($authorId) {
+            $queryString = str_replace("WHERE TRUE", "WHERE posts.author_id=:authorId", $queryString);
             $query = $this->pdo->prepare($queryString);
-            $query->bindParam("id", $id);
+            $query->bindParam("authorId", $authorId);
         }
 
         $query->bindParam("offset", $offset);
@@ -35,26 +61,21 @@ class Model_Posts extends \core\Model
 
         $posts = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        $posts = array_map(function ($elem) {
-            $elem["created_at"] = date("d.m.Y H:i:s", $elem["created_at"]);
-            $elem["comments_count_text"] = $elem["comments_count"] . " " . $this->getCommentSuffix($elem["comments_count"]);
-            $elem["body"] = $this->bbCodeDecode($elem["body"]);
-            return $elem;
-        }, $posts);
+        $posts = array_map(array($this, 'postWork'), $posts);
 
         return $posts;
     }
 
-    private function getCount($id = null)
+    public function getCount(iterable $args)
     {
 
-        $query = "SELECT COUNT(id) FROM posts";
-        $postsCount = $this->pdo->prepare($query);
+        $queryString = "SELECT COUNT(id) FROM posts WHERE TRUE";
+        $postsCount = $this->pdo->prepare($queryString);
 
-        if ($id) {
-            $query = "SELECT COUNT(id) FROM posts WHERE author_id=:id";
-            $postsCount = $this->pdo->prepare($query);
-            $postsCount->bindParam("id", $id);
+        if ($args['authorId']) {
+            $queryString = str_replace("WHERE TRUE", "WHERE author_id=:authorId", $queryString);
+            $postsCount = $this->pdo->prepare($queryString);
+            $postsCount->bindParam("authorId", $args['authorId']);
         }
         $postsCount->execute();
         $postsCount = $postsCount->fetchColumn();
@@ -62,43 +83,20 @@ class Model_Posts extends \core\Model
         return $postsCount;
     }
 
-    public function get_data($offset = 0, $newest = false)
-    {
-
-        $result = [];
-        $result["posts"] = $this->getPage($offset, $newest);
-        $result["totalCount"] = $this->getCount();
-        $result["currentCount"] = $offset + count($result["posts"]);
-
-        return $result;
-    }
-
-    public function getByAuthor($offset = 0, $id)
-    {
-        $result = [];
-        $result["posts"] = $this->getPage($offset, true, $id);
-        $result["totalCount"] = $this->getCount($id);
-        $result["currentCount"] = $offset + count($result["posts"]);
-
-        return $result;
-    }
-
-    public function getPostInfo($postId)
+    public function get($postId)
     {
 
         $queryString = str_replace(":order", "TRUE", self::QUERY_BASE);
-        $queryString = str_replace("WHERE TRUE", "WHERE posts.id=:id", $queryString);
+        $queryString = str_replace("WHERE TRUE", "WHERE posts.id=:postId", $queryString);
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("id", $postId);
+        $query->bindParam("postId", $postId);
         $query->bindValue("offset", 0);
 
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["created_at"] = date("d.m.Y H:i:s", $info["created_at"]);
-        $info["comments_count_text"] = $info["comments_count"] . " " . $this->getCommentSuffix($info["comments_count"]);
-        $info["body"] = $this->bbCodeDecode($info["body"]);
+        $info = $this->postWork($info);
 
         return $info;
     }
@@ -129,14 +127,18 @@ class Model_Posts extends \core\Model
         }
     }
 
-    public function addPost($author_id, $title, $body)
+    public function create(iterable $args)
     {
+        $title = $args['title'];
+        $body = $args['body'];
+        $authorId = $args['authorId'];
+
         $queryString = "INSERT INTO posts (author_id, title, body, created_at) VALUES (:author_id, :title, :body, :created_at);";
 
         $query = $this->pdo->prepare($queryString);
 
         $query->bindParam("title", $title);
-        $query->bindParam("author_id", $author_id);
+        $query->bindParam("author_id", $authorId);
         $query->bindParam("body", $body);
         $query->bindValue("created_at", time());
 
@@ -147,22 +149,22 @@ class Model_Posts extends \core\Model
         return $postId;
     }
 
-    public function addPostLike($author_id, $post_id, $like)
+    public function addPostLike($authorId, $postId, $likeSign)
     {
         $queryString = "INSERT INTO posts_likes (author_id, post_id, rating) VALUES (:author_id, :post_id, :rating);";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("post_id", $post_id);
-        $query->bindParam("author_id", $author_id);
-        $query->bindValue("rating", ($like ? 1 : -1));
+        $query->bindParam("post_id", $postId);
+        $query->bindParam("author_id", $authorId);
+        $query->bindValue("rating", ($likeSign ? 1 : -1));
         $query->execute();
 
         $queryString = "SELECT SUM(rating) AS likes_count FROM posts_likes WHERE post_id=:post_id;";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("post_id", $post_id);
+        $query->bindParam("post_id", $postId);
         $query->execute();
 
         $row = $query->fetch(\PDO::FETCH_ASSOC);
@@ -170,14 +172,14 @@ class Model_Posts extends \core\Model
         return $row['likes_count'];
     }
 
-    public function checkPostRating($author_id, $post_id)
+    public function checkPostRating($authorId, $postId)
     {
         $queryString = "SELECT id FROM posts_likes WHERE author_id=:author_id AND post_id=:post_id;";
 
         $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("post_id", $post_id);
-        $query->bindParam("author_id", $author_id);
+        $query->bindParam("post_id", $postId);
+        $query->bindParam("author_id", $authorId);
 
         $query->execute();
 

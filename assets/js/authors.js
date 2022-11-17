@@ -17,7 +17,7 @@ function getUserElement(elem) {
         "                                </div>\n" +
         "                                <div class='card-body'>\n" +
         "                                    <p> Количество постов автора: " + elem.posts_count +
-        "                                       <a href='/authors/" + elem.id + "/posts'>Перейти</a></p>\n" +
+        "                                       <a href='/authors/" + elem.authorId + "/posts'>Перейти</a></p>\n" +
         "                                </div>\n" +
         "                                <div class='card-bottom'></div>\n" +
         "                            </div>\n" +
@@ -30,7 +30,7 @@ function getUserElement(elem) {
 }
 
 function loadUsers() {
-    let curCount = $(".row.post").length;
+    let curCount = $(".row.authors").length;
     $.get("/authors/getUsers"+(location.search?location.search+"&":"?")+"offset="+curCount).done(function (data) {
 
         data.authors.forEach(function (elem, key) {
@@ -52,7 +52,7 @@ function loadUsers() {
 }
 
 function getUserInfo(authorId) {
-    $.get("/authors/"+authorId).done(function (data) {
+    $.get("/authors/getAuthor?authorId="+authorId).done(function (data) {
         console.log(data);
         let newElement = getUserElement(data);
         $(".row.authors").replaceWith($(newElement));
