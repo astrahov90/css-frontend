@@ -1,13 +1,16 @@
 <?php
 
-class Model_Login extends \core\Model
+use core\interfaces\IModelCreate;
+use core\interfaces\IModelGet;
+
+class Model_Login extends \core\Model implements IModelCreate, IModelGet
 {
     const QUERY_BASE = "SELECT
         user.id, user.username, user.password_hash
         FROM user
         WHERE username=:username";
 
-    public function getUser($username)
+    public function get($username)
     {
         $queryString = self::QUERY_BASE;
         $query = $this->pdo->prepare($queryString);
@@ -16,11 +19,18 @@ class Model_Login extends \core\Model
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
+        $info = $this->postWork($info);
         return $info;
     }
 
-    public function addUser($username, $password, $email, $description, $iconPath=null)
+    public function create(iterable $args)
     {
+        $username = $args['username'];
+        $password = $args['password'];
+        $email = $args['email'];
+        $description = $args['description'];
+        $iconPath = $args['iconPath'];
+
         $queryString = "-- auto-generated definition
                 INSERT INTO user 
                 (username, auth_key, password_hash, password_reset_token, email,
@@ -43,7 +53,7 @@ class Model_Login extends \core\Model
 
         $query->execute();
 
-        $info = $this->getUser($username);
+        $info = $this->get($username);
         return $info;
     }
 }

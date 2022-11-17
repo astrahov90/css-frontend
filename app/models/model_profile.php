@@ -1,12 +1,19 @@
 <?php
 
-class Model_Profile extends \core\Model
+use core\interfaces\IModelGet;
+
+class Model_Profile extends \core\Model implements IModelGet
 {
 
     const QUERY_BASE = "SELECT
         * from user WHERE id=:id";
 
-    public function getUserInfo($userId)
+    protected function postWork($elem){
+        $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
+        return $elem;
+    }
+
+    public function get($userId)
     {
 
         $queryString = self::QUERY_BASE;
@@ -17,7 +24,7 @@ class Model_Profile extends \core\Model
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["created_at"] = date("d.m.Y", $info["created_at"] / 1000);
+        $info = $this->postWork($info);
 
         return $info;
     }

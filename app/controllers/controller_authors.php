@@ -9,14 +9,23 @@ class Controller_Authors extends \core\Controller
         $this->view = new \core\View();
     }
 
-    function action_index($model_id = null)
+    function action_getAuthor()
     {
-        if (isset($model_id)) {
-            $result = $this->model->getAuthorInfo($model_id);
-            header('Content-Type: application/json; charset=utf-8');
-            die(json_encode($result));
+        $authorId = $_REQUEST["authorId"]??null;
+
+        if ($authorId == null)
+        {
+            http_response_code(400);
+            die();
         }
 
+        $result = $this->model->get($authorId);
+        header('Content-Type: application/json; charset=utf-8');
+        die(json_encode($result));
+    }
+
+    function action_index()
+    {
         $data = [];
         $data['authors'] = true;
 
@@ -25,12 +34,9 @@ class Controller_Authors extends \core\Controller
 
     function action_getUsers()
     {
+        $offset = $_REQUEST['offset']??0;
 
-        $offset = 0;
-        if (isset($_REQUEST["offset"]))
-            $offset = $_REQUEST["offset"];
-
-        $result = $this->model->get_data($offset);
+        $result = $this->model->getList(compact(['offset']));
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -38,9 +44,6 @@ class Controller_Authors extends \core\Controller
 
     function action_posts($authorId)
     {
-        $data = [];
-        $data["author"] = $this->model->getAuthorInfo($authorId);
-
-        $this->view->generate('app/views/authors_posts_view.php', "template_view.php", $data);
+        $this->view->generate('app/views/authors_posts_view.php', "template_view.php", compact(['authorId']));
     }
 }

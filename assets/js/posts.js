@@ -5,8 +5,8 @@ function getMorePosts(scrollDown=true) {
     }
 }
 
-function getUserPosts(id) {
-    getPostsCommon(id);
+function getUserPosts(authorId) {
+    getPostsCommon(authorId);
 }
 
 function getPostElement(elem,curIndex, avatarField="") {
@@ -103,8 +103,6 @@ function scrollIntoViewIfNeeded($target) {
 function hidePostsMoreButton()
 {
     $.each($(".row.post"),function (index,elem) {
-        console.log($(elem).find('.card-body').height());
-        console.log($(elem).find('.card-body').css('max-height'));
         if ($(elem).find('.card-body').height()<parseInt($(elem).find('.card-body').css('max-height')))
         {
             $(elem).find('.card-read-more-button').remove();
@@ -114,7 +112,7 @@ function hidePostsMoreButton()
 
 function getPostComments(postId) {
     let curCount = $(".row.comment").length;
-    querystring = "/comments/getCommentsByPost"+(location.search?location.search+"&":"?")+"id="+postId+"&offset="+curCount;
+    querystring = "/comments/getCommentsByPost"+(location.search?location.search+"&":"?")+"postId="+postId+"&offset="+curCount;
 
     $.get(querystring).done(function (data) {
 
@@ -167,7 +165,7 @@ function getPostComments(postId) {
 }
 
 function getPostInfo(postId) {
-    querystring = "/posts/"+postId;
+    querystring = "/posts/getPost?postId="+postId;
 
     $.get(querystring).done(function (data) {
         let avatarField = "<img class='avatar' src='"+data.iconPath+"' alt='Аватар автора'>";

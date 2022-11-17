@@ -19,7 +19,7 @@
 <script>loadCSS("/assets/css/posts.css")</script>
 
 <script>
-    let userId = "<?php echo $author['authorId'] ?>";
+    let userId = "<?php echo $authorId ?>";
 
     let mortPostsBtn = $(".morePosts");
     mortPostsBtn.hide();

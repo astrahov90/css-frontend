@@ -1,20 +1,30 @@
 <?php
 
-class Model_Authors extends \core\Model
+use core\interfaces\IModelGet;
+use core\interfaces\IModelGetList;
+
+class Model_Authors extends \core\Model implements IModelGet, IModelGetList
 {
 
     const QUERY_BASE = "SELECT
         user.id as authorId, user.username as authorName, user.iconPath, user.created_at, user.description, COUNT(posts.id) as posts_count
         FROM user
-        LEFT JOIN posts ON user.id=posts.author_id :WHERE
+        LEFT JOIN posts ON user.id=posts.author_id WHERE TRUE
         GROUP BY user.id, user.username, user.iconPath, user.created_at, user.description
         ORDER BY user.username
         LIMIT 5 OFFSET :offset";
 
-    private function getPage($offset = 0)
+    public function postWork($elem)
     {
+        $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
+        return $elem;
+    }
 
-        $queryString = str_replace(":WHERE", "", self::QUERY_BASE);
+    public function getPage(iterable $args)
+    {
+        $offset = $args['offset'];
+
+        $queryString = str_replace("WHERE TRUE", "", self::QUERY_BASE);
 
         $query = $this->pdo->prepare($queryString);
 
@@ -24,15 +34,12 @@ class Model_Authors extends \core\Model
 
         $authors = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        $authors = array_map(function ($elem) {
-            $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
-            return $elem;
-        }, $authors);
+        $authors = array_map([$this,'postWork'], $authors);
 
         return $authors;
     }
 
-    private function getCount($id = null)
+    public function getCount(iterable $args)
     {
 
         $query = "SELECT 
@@ -46,21 +53,21 @@ class Model_Authors extends \core\Model
         return $authorCount;
     }
 
-    public function get_data($offset = 0)
+    public function getList(iterable $args)
     {
 
         $result = [];
-        $result["authors"] = $this->getPage($offset);
-        $result["totalCount"] = $this->getCount();
-        $result["currentCount"] = $offset + count($result["authors"]);
+        $result["authors"] = $this->getPage($args);
+        $result["totalCount"] = $this->getCount($args);
+        $result["currentCount"] = $args['offset'] + count($result["authors"]);
 
         return $result;
     }
 
-    public function getAuthorInfo($authorId)
+    public function get($authorId)
     {
 
-        $queryString = str_replace(":WHERE", "WHERE user.id=:id", self::QUERY_BASE);
+        $queryString = str_replace("WHERE TRUE", "WHERE user.id=:id", self::QUERY_BASE);
         $query = $this->pdo->prepare($queryString);
 
         $query->bindParam("id", $authorId);
@@ -69,7 +76,7 @@ class Model_Authors extends \core\Model
         $query->execute();
 
         $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info["created_at"] = date("d.m.Y", $info["signDate"]);
+        $info = $this->postWork($info);
 
         return $info;
     }

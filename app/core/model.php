@@ -2,17 +2,13 @@
 
 namespace core;
 
-class Model
+abstract class Model
 {
     protected $pdo;
 
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
-    }
-
-    public function get_data()
-    {
     }
 
     protected function bbCodeDecode($curText)
@@ -26,13 +22,17 @@ class Model
         $curText = preg_replace("/(\[url\])(.+?)(\[\/url\])/i", "<a href='$2'>$2</a>", $curText);
         $curText = preg_replace("/(\[url=(.+?)\])(.+?)(\[\/url\])/i", "<a href='$2'>$3</a>", $curText);
         $curText = preg_replace("/(\[color='(.+?)'\])(.+?)(\[\/color\])/i", "<span style='color: $2;'>$3</span>", $curText);
-        /*$curText = preg_replace("/\r\n/i","<br>",$curText);*/
 
         return $curText;
     }
 
     protected function getRandomHashKey(){
         return substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32);
-}
+    }
+
+    protected function postWork($elem)
+    {
+        return $elem;
+    }
 
 }

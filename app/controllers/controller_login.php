@@ -13,7 +13,7 @@ class Controller_Login extends \core\Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_REQUEST["username"]) && isset($_REQUEST["password"])) {
-                $userData = $this->model->getUser($_REQUEST["username"]);
+                $userData = $this->model->get($_REQUEST["username"]);
                 if (password_verify($_REQUEST["password"], $userData['password_hash'])) {
                     $_SESSION["isAuthorized"] = true;
                     $_SESSION["userId"] = $userData["id"];
@@ -70,7 +70,7 @@ class Controller_Login extends \core\Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_REQUEST["username"]) && isset($_REQUEST["password"]) && isset($_REQUEST["password_again"])
                 && isset($_REQUEST["email"]) && isset($_REQUEST["description"])) {
-                $checkUser = $this->model->getUser($_REQUEST["username"]);
+                $checkUser = $this->model->get($_REQUEST["username"]);
 
                 if ($checkUser !== false) {
                     $data = [];
@@ -89,7 +89,19 @@ class Controller_Login extends \core\Controller
                     $iconPath = $uploadfile;
                 }
 
-                $newUser = $this->model->addUser($_REQUEST['username'], $_REQUEST['password'], $_REQUEST['email'], $_REQUEST['description'], $iconPath);
+                $result = $this->model->create(['username' => $_REQUEST['username'],
+                    'password' => $_REQUEST['password'],
+                    'email' => $_REQUEST['email'],
+                    'description' => $_REQUEST['description'],
+                    'iconPath' => $iconPath]);
+
+                if (!$result)
+                {
+                    http_response_code(400);
+                    die();
+                }
+
+                $newUser = $this->model->get($_REQUEST['username']);
 
                 $_SESSION["isAuthorized"] = true;
                 $_SESSION["userId"] = $newUser["id"];

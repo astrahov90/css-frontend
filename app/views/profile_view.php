@@ -13,9 +13,9 @@
                             <div class='card-title'>
                                 <div class='container-fluid'>
                                     <div class='row'>
-                                        <div class='col-4 fw-bold'><?php echo $author['name'] ?></div>
+                                        <div class='col-4 fw-bold'><?php echo $author['username'] ?></div>
                                         <div class='col-3 offset-5'>Дата
-                                            регистрации: <?php echo $author['signDate'] ?></div>
+                                            регистрации: <?php echo $author['created_at'] ?></div>
                                     </div>
                                 </div>
                             </div>
