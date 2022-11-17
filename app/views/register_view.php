@@ -1,6 +1,6 @@
 <section class="section-body bg-light section-middle">
     <div class="container bg-light">
-        <form method="post" id="register-form">
+        <form method="post" id="register-form" enctype="multipart/form-data">
             <h2>Регистрация нового пользователя</h2>
             <label for="login" class="form-label">Логин</label>
             <input class="form-control" name="username" type="text" id="username" placeholder="Введите логин" required>
@@ -20,6 +20,9 @@
             <label for="description" class="form-label">О себе</label>
             <input class="form-control" name="description" type="text" id="description" placeholder="Кратко о себе"
                    required>
+            <div class="clearfix"></div>
+            <label for="avatar" class="form-label">Аватар</label>
+            <input class="form-control" type="file" id="formFile" name="avatar" accept="image/jpeg, image/png">
             <div class="clearfix"></div>
             <div class="btn-group">
                 <button type="submit" class='btn btn-primary mt-2'>Зарегистрироваться</button>
