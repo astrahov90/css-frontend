@@ -79,7 +79,17 @@ class Controller_Login extends \core\Controller
                     die();
                 }
 
-                $newUser = $this->model->addUser($_REQUEST['username'], $_REQUEST['password'], $_REQUEST['email'], $_REQUEST['description']);
+                $iconPath = null;
+                if (isset($_FILES['avatar'])) {
+                    $uploaddir = '/files/users/';
+                    $uploadfile = $uploaddir . uniqid(rand(), false) . '.' . pathinfo(basename($_FILES['avatar']['name']), PATHINFO_EXTENSION);
+
+                    move_uploaded_file($_FILES['avatar']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $uploadfile);
+
+                    $iconPath = $uploadfile;
+                }
+
+                $newUser = $this->model->addUser($_REQUEST['username'], $_REQUEST['password'], $_REQUEST['email'], $_REQUEST['description'], $iconPath);
 
                 $_SESSION["isAuthorized"] = true;
                 $_SESSION["userId"] = $newUser["id"];

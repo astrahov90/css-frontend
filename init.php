@@ -352,16 +352,16 @@ function addUser(\PDO $pdo, array $userData)
 
     $query = $pdo->prepare($queryString);
     $query->bindParam('username', $userData['username']);
-    $query->bindValue('auth_key', substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32));
+    $query->bindValue('auth_key', getRandomHashKey());
     $query->bindParam('password_hash', $userData['password_hash']);
-    $query->bindValue('password_reset_token', substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32) . '_' . time());
+    $query->bindValue('password_reset_token', getRandomHashKey() . '_' . time());
     $query->bindParam('email', $userData['email']);
     $query->bindValue('status', 10);
     $query->bindValue('created_at', time());
     $query->bindValue('updated_at', time());
     $query->bindParam('iconPath', $userData['iconPath']);
     $query->bindParam('description', $userData['description']);
-    $query->bindValue('verification_token', substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32) . '_' . time());
+    $query->bindValue('verification_token', getRandomHashKey() . '_' . time());
 
     return $query->execute();
 }
@@ -394,5 +394,10 @@ function addComment(\PDO $pdo, array $commentData)
     $query->bindParam('body', $commentData['body']);
     $query->bindValue('created_at', time());
     return $query->execute();
+}
+
+function getRandomHashKey()
+{
+    return substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32);
 }
 ?>

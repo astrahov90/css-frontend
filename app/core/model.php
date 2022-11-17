@@ -30,4 +30,9 @@ class Model
 
         return $curText;
     }
+
+    protected function getRandomHashKey(){
+        return substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32);
+}
+
 }
