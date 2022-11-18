@@ -30,6 +30,12 @@ class Controller_Comments extends \core\Controller
 
     function action_addCommentToPost()
     {
+        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
+        {
+            http_response_code(403);
+            die();
+        }
+
         $postId = $_REQUEST["postId"];
         $body = $_REQUEST["body"];
         $authorId = $_SESSION["userId"];

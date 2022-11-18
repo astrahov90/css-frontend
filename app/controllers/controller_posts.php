@@ -67,6 +67,12 @@ class Controller_Posts extends \core\Controller
 
     function action_addPost()
     {
+        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
+        {
+            http_response_code(403);
+            die();
+        }
+
         $title = $_REQUEST["title"];
         $body = $_REQUEST["body"];
         $authorId = $_SESSION["userId"];
