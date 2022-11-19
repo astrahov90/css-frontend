@@ -33,7 +33,7 @@ function loadUsers() {
     let curCount = $(".row.authors").length;
     $.get("/authors/getUsers"+(location.search?location.search+"&":"?")+"offset="+curCount).done(function (data) {
 
-        data.authors.forEach(function (elem, key) {
+        data.data.forEach(function (elem, key) {
             let newElement = getUserElement(elem);
 
             $(newElement).insertBefore($(".moreAuthors"));
@@ -53,7 +53,6 @@ function loadUsers() {
 
 function getUserInfo(authorId) {
     $.get("/authors/getAuthor?authorId="+authorId).done(function (data) {
-        console.log(data);
         let newElement = getUserElement(data);
         $(".row.authors").replaceWith($(newElement));
     });

@@ -52,12 +52,7 @@ class Model_Comments extends \core\Model implements IModelGetList, IModelCreate,
 
     public function getList(iterable $args)
     {
-        $result = [];
-        $result["comments"] = $this->getPage($args);
-        $result["totalCount"] = $this->getCount($args);
-        $result["currentCount"] = $args['offset'] + count($result["comments"]);
-
-        return $result;
+        return parent::getList($args);
     }
 
     public function create(iterable $args)
