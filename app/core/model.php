@@ -79,14 +79,4 @@ abstract class Model implements IModelDB
         return $recordId;
     }
 
-    protected function getList(iterable $args)
-    {
-        $result = [];
-        $result["data"] = $this->getPage($args);
-        $result["totalCount"] = $this->getCount($args);
-        $result["currentCount"] = $args['offset'] + count($result["data"]);
-
-        return $result;
-    }
-
 }

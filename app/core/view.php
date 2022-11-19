@@ -1,6 +1,7 @@
 <?php
 
 namespace core;
+
 class View
 {
     function generate($content_view, $template_view, $data = null)

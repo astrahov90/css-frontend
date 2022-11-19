@@ -3,11 +3,13 @@
 namespace models;
 
 use core\interfaces\IModelCreate;
-use core\interfaces\IModelGetList;
 use core\interfaces\IModelPostWork;
+use core\traits\GetListTrait;
 
-class Model_Comments extends \core\Model implements IModelGetList, IModelCreate, IModelPostWork
+class Model_Comments extends \core\Model implements IModelCreate, IModelPostWork
 {
+
+    use GetListTrait;
 
     const QUERY_BASE = "SELECT
         comments.id, comments.post_id, comments.body, comments.created_at, user.id as authorId, user.username as authorName, user.iconPath
@@ -48,11 +50,6 @@ class Model_Comments extends \core\Model implements IModelGetList, IModelCreate,
         $result = $this->getValue($queryString, $params);
 
         return $result;
-    }
-
-    public function getList(iterable $args)
-    {
-        return parent::getList($args);
     }
 
     public function create(iterable $args)
