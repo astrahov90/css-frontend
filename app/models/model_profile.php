@@ -1,48 +1,45 @@
 <?php
 
-use core\interfaces\IModelGet;
+namespace models;
 
-class Model_Profile extends \core\Model implements IModelGet
+use core\interfaces\IModelGet;
+use core\interfaces\IModelPostWork;
+
+class Model_Profile extends \core\Model implements IModelGet, IModelPostWork
 {
 
     const QUERY_BASE = "SELECT
         * from user WHERE id=:id";
 
-    protected function postWork($elem){
+    public function postWork($elem){
         $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
         return $elem;
     }
 
     public function get($userId)
     {
+        $params = [];
+        $params["id"] = $userId;
 
         $queryString = self::QUERY_BASE;
-        $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("id", $userId);
+        $result = $this->getOne($queryString, $params);
 
-        $query->execute();
+        $result = $this->postWork($result);
 
-        $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info = $this->postWork($info);
-
-        return $info;
+        return $result;
     }
 
-    public function updateUserAvatar($id, $uploadedFile)
+    public function updateUserAvatar($id, $iconPath)
     {
+        $params = [];
+        $params["id"] = $id;
+        $params["iconPath"] = $iconPath;
+        $params["updated_at"] = time();
 
         $queryString = "UPDATE user SET iconPath=:iconPath, updated_at=:updated_at WHERE id=:id";
 
-        $query = $this->pdo->prepare($queryString);
-
-        $query->bindParam("id", $id);
-        $query->bindParam("iconPath", $uploadedFile);
-        $query->bindValue("updated_at", time());
-
-        $query->execute();
-
-        return true;
+        $this->updateOne($queryString, $params);
     }
 
 }

@@ -1,11 +1,13 @@
 <?php
 
+namespace controllers;
+
 class Controller_Profile extends \core\Controller
 {
     function __construct($pdo)
     {
         parent::__construct();
-        $this->model = new Model_Profile($pdo);
+        $this->model = new \models\Model_Profile($pdo);
         $this->view = new \core\View();
     }
 

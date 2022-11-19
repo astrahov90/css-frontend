@@ -8,7 +8,6 @@
 </section>
 
 <script src="/assets/js/posts.js"></script>
-<script>loadCSS("/assets/css/posts.css")</script>
 
 <script>
     let morePostsBtn = $(".morePosts");

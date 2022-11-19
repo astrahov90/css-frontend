@@ -9,7 +9,7 @@ class Controller
     public $view;
 
 
-    function __construct($pdo = null)
+    function __construct($dbh = null)
     {
         $this->view = new View();
     }

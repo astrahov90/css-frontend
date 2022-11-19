@@ -1,5 +1,7 @@
 <?php
 
+namespace controllers;
+
 class Controller_Contacts extends \core\Controller
 {
     function action_index()
