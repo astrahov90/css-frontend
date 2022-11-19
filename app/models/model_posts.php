@@ -4,11 +4,12 @@ namespace models;
 
 use core\interfaces\IModelCreate;
 use core\interfaces\IModelGet;
-use core\interfaces\IModelGetList;
 use core\interfaces\IModelPostWork;
+use core\traits\GetListTrait;
 
-class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModelGetList, IModelPostWork
+class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModelPostWork
 {
+    use GetListTrait;
 
     const QUERY_BASE = "SELECT
         posts.id, posts.title, posts.body, posts.created_at, user.id as authorId, user.username as authorName, user.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count, IFNULL(comments.comments_count,0) as comments_count
@@ -72,11 +73,6 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
         return $result;
     }
 
-    public function getList(iterable $args)
-    {
-        return parent::getList($args);
-    }
-
     public function get($postId)
     {
         $params = [];
@@ -112,39 +108,34 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
     {
         $queryString = "INSERT INTO posts_likes (author_id, post_id, rating) VALUES (:author_id, :post_id, :rating);";
 
-        $query = $this->dbh->prepare($queryString);
+        $params = [];
+        $params["post_id"] = $postId;
+        $params["author_id"] = $authorId;
+        $params["rating"] = ($likeSign ? 1 : -1);
 
-        $query->bindParam("post_id", $postId);
-        $query->bindParam("author_id", $authorId);
-        $query->bindValue("rating", ($likeSign ? 1 : -1));
-        $query->execute();
+        $this->createOne($queryString, $params);
 
         $queryString = "SELECT SUM(rating) AS likes_count FROM posts_likes WHERE post_id=:post_id;";
 
-        $query = $this->dbh->prepare($queryString);
+        $params = [];
+        $params["post_id"] = $postId;
 
-        $query->bindParam("post_id", $postId);
-        $query->execute();
+        $result = $this->getValue($queryString, $params);
 
-        $row = $query->fetch(\PDO::FETCH_ASSOC);
-
-        return $row['likes_count'];
+        return $result;
     }
 
     public function checkPostRating($authorId, $postId)
     {
         $queryString = "SELECT id FROM posts_likes WHERE author_id=:author_id AND post_id=:post_id;";
 
-        $query = $this->dbh->prepare($queryString);
+        $params = [];
+        $params["post_id"] = $postId;
+        $params["author_id"] = $authorId;
 
-        $query->bindParam("post_id", $postId);
-        $query->bindParam("author_id", $authorId);
+        $result = $this->getOne($queryString, $params);
 
-        $query->execute();
-
-        $row = $query->fetch(\PDO::FETCH_ASSOC);
-
-        return !!$row;
+        return !!$result;
     }
 
     private function getCommentSuffix($commentNum)

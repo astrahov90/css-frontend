@@ -3,11 +3,12 @@
 namespace models;
 
 use core\interfaces\IModelGet;
-use core\interfaces\IModelGetList;
 use core\interfaces\IModelPostWork;
+use core\traits\GetListTrait;
 
-class Model_Authors extends \core\Model implements IModelGet, IModelGetList, IModelPostWork
+class Model_Authors extends \core\Model implements IModelGet, IModelPostWork
 {
+    use GetListTrait;
 
     const QUERY_BASE = "SELECT
         user.id as authorId, user.username as authorName, user.iconPath, user.created_at, user.description, COUNT(posts.id) as posts_count
@@ -46,11 +47,6 @@ class Model_Authors extends \core\Model implements IModelGet, IModelGetList, IMo
         $result = $this->getValue($queryString);
 
         return $result;
-    }
-
-    public function getList(iterable $args)
-    {
-        return parent::getList($args);
     }
 
     public function get($authorId)

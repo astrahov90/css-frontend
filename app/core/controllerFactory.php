@@ -12,7 +12,7 @@ class ControllerFactory implements IControllerFactory
     {
         if (class_exists(self::CONTROLLER_PREFIX.$className))
         {
-            $controller = new (self::CONTROLLER_PREFIX.$className)(new View());
+            $controller = new (self::CONTROLLER_PREFIX.$className)(ViewFactory::build('core\view'));
             $controller->setModel($className);
 
             return $controller;
