@@ -471,6 +471,142 @@ a.btn{
 }
 
 
+.post:not(:first-child) {
+    margin-top: 3rem;
+}
+.comment:not(:first-child) {
+    margin-top: 3rem;
+}
+
+.post .card-body{
+    max-height: 300px;
+    overflow: hidden;
+    position: relative;
+    box-sizing: content-box;
+    min-height: 200px;
+}
+
+.comment .card-body{
+    box-sizing: content-box;
+    min-height: 250px;
+    white-space: pre-wrap;
+}
+
+.post .card-body .card-bottom {
+    position: absolute; /* Если прыгает - можно попробовать sticky */
+    bottom: 0;
+    background: linear-gradient(
+            to bottom,
+            rgb(255 255 255 / 0%),
+            rgb(255 255 255)90%);
+    width: 100%;
+    height: 60px;
+    opacity: 1;
+    transition: 0.3s;
+}
+[data-more-checker^="card-read-more"] {
+    opacity: 0;
+    position: absolute;
+}
+[data-more-checker^="card-read-more"]:checked ~ .card-body {
+    max-height: none;
+}
+[data-more-checker^="card-read-more"]:checked ~ .card-body .card-bottom {
+    opacity: 0;
+    transition: 0.3s;
+}
+[data-more-checker^="card-read-more"] ~ .card-read-more-button:before  {
+    content: "Развернуть »";
+}
+[data-more-checker^="card-read-more"]:checked ~ .card-read-more-button:before {
+    content: "Свернуть «";
+}
+.card-read-more-button {
+    cursor: pointer;
+    display: inline-block;
+    color: #777;
+    text-decoration: underline;
+}
+
+.morePosts:hover{
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.moreComments:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+.row.post .post-left {
+    position: relative;
+}
+
+.row.post .post-bottom {
+    position: relative;
+    bottom: -4em;
+}
+
+.row.comment .comment-left {
+    position: relative;
+}
+
+.row.comment .comment-bottom {
+    position: relative;
+    bottom: -4em;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.align-items-stretch {
+    align-items: stretch;
+}
+
+.align-self-start {
+    align-self: flex-start;
+}
+
+.comment {
+    margin-top: 2rem;
+}
+
+.hasComments + .comment {
+    margin-top: initial;
+}
+
+.hasPosts + .post {
+    margin-top: initial;
+}
+
+.hasComments {
+    padding: 1em 0;
+    font-weight: bold;
+}
+
+.hasPosts {
+    padding: 1em 0;
+    font-weight: bold;
+}
+
+.row.authors .card{
+    min-height: 6em;
+}
+
+.row.authors .card-body{
+    margin-top: 3em;
+}
+
+.row.authors{
+    margin-bottom: 1em;
+}
+
 @media only screen and (max-device-width: 480px) {
     header {
         padding: 0 5%;

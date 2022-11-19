@@ -4,42 +4,29 @@ namespace core;
 
 class Router
 {
-    static function start($pdo)
+    static function start($dbh)
     {
         $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-        preg_match('/\/(?P<controller>\w+)\/((?P<id>\d*)\/)?((?P<action>\w*)\/?)?/', $uri, $matches);
+        preg_match('/\/((?P<controller>\w+)\/?)((?P<id>\d*)\/)?((?P<action>\w*)\/?)?/', $uri, $matches);
 
         $controller_name = $matches['controller']?:'Main';
-        $model_id = $matches['id']?:null;
+        $object_id = $matches['id']?:null;
         $action_name = $matches['action']?:'index';
 
-        $model_name = 'Model_' . $controller_name;
-        $controller_name = 'Controller_' . $controller_name;
+        $controller_name = 'controllers\Controller_' . $controller_name;
         $action_name = 'action_' . $action_name;
 
-        $model_file = strtolower($model_name) . '.php';
-        $model_path = "app/models/" . $model_file;
-        if (file_exists($model_path)) {
-            include $model_path;
-        }
-
-        $controller_file = strtolower($controller_name) . '.php';
-        $controller_path = "app/controllers/" . $controller_file;
-        if (file_exists($controller_path)) {
-            include $controller_path;
-        } else {
+        if (!class_exists($controller_name))
             self::ErrorPage404();
-        }
 
-        $controller = new $controller_name($pdo);
-        $action = $action_name;
+        $controller = new $controller_name($dbh);
 
-        if (method_exists($controller, $action)) {
-            if (isset($model_id))
-                $controller->$action($model_id);
+        if (method_exists($controller, $action_name)) {
+            if (isset($object_id))
+                $controller->$action_name($object_id);
             else
-                $controller->$action();
+                $controller->$action_name();
         } else {
             self::ErrorPage404();
         }

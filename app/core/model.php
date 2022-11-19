@@ -2,13 +2,15 @@
 
 namespace core;
 
-abstract class Model
-{
-    protected $pdo;
+use core\interfaces\IModelDB;
 
-    public function __construct($pdo)
+class Model implements IModelDB
+{
+    private \PDO $dbh;
+
+    public function __construct($dbh)
     {
-        $this->pdo = $pdo;
+        $this->dbh = $dbh;
     }
 
     protected function bbCodeDecode($curText)
@@ -30,9 +32,51 @@ abstract class Model
         return substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32);
     }
 
-    protected function postWork($elem)
+    public function getValue($queryString, $params)
     {
-        return $elem;
+        $query = $this->dbh->prepare($queryString);
+        $query->execute($params);
+        $result = $query->fetchColumn();
+
+        return $result;
+    }
+
+    public function getAll($queryString, $params=[])
+    {
+        $query = $this->dbh->prepare($queryString);
+        $query->execute($params);
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    public function getOne($queryString, $params)
+    {
+        $query = $this->dbh->prepare($queryString);
+        $query->execute($params);
+        $result = $query->fetch(\PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    public function createOne($queryString, $params)
+    {
+        $query = $this->dbh->prepare($queryString);
+        $query->execute($params);
+
+        $recordId = $this->dbh->lastInsertId();
+
+        return $recordId;
+    }
+
+    public function updateOne($queryString, $params)
+    {
+        $query = $this->dbh->prepare($queryString);
+        $query->execute($params);
+
+        $recordId = $this->dbh->lastInsertId();
+
+        return $recordId;
     }
 
 }

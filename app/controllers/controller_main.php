@@ -1,5 +1,7 @@
 <?php
 
+namespace controllers;
+
 class Controller_Main extends \core\Controller
 {
     function action_index()
@@ -19,5 +21,10 @@ class Controller_Main extends \core\Controller
             $this->view->generate('app/views/posts_view.php', "template_view.php", $data);
         }
 
+    }
+
+    function action_error()
+    {
+        $this->view->generate('app/views/error_view.php', "template_view.php");
     }
 }

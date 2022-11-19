@@ -41,7 +41,6 @@
     </div>
 </section>
 
-<script>loadCSS("/assets/css/posts.css")</script>
 <script>
     let previewData = $("#preview-data");
     previewData.hide();

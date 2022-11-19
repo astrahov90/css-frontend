@@ -1,9 +1,12 @@
 <?php
 
+namespace models;
+
 use core\interfaces\IModelGet;
 use core\interfaces\IModelGetList;
+use core\interfaces\IModelPostWork;
 
-class Model_Authors extends \core\Model implements IModelGet, IModelGetList
+class Model_Authors extends \core\Model implements IModelGet, IModelGetList, IModelPostWork
 {
 
     const QUERY_BASE = "SELECT
@@ -17,40 +20,32 @@ class Model_Authors extends \core\Model implements IModelGet, IModelGetList
     public function postWork($elem)
     {
         $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
+
         return $elem;
     }
 
     public function getPage(iterable $args)
     {
-        $offset = $args['offset'];
+        $params = [];
+        $params["offset"] = $args['offset'];
 
         $queryString = str_replace("WHERE TRUE", "", self::QUERY_BASE);
 
-        $query = $this->pdo->prepare($queryString);
+        $result = $this->getAll($queryString, $params);
 
-        $query->bindParam("offset", $offset);
+        $result = array_map(array($this, 'postWork'), $result);
 
-        $query->execute();
-
-        $authors = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-        $authors = array_map([$this,'postWork'], $authors);
-
-        return $authors;
+        return $result;
     }
 
     public function getCount(iterable $args)
     {
-
-        $query = "SELECT 
+        $queryString = "SELECT 
         COUNT(DISTINCT posts.author_id) as authors_count
         FROM posts";
-        $authorCount = $this->pdo->prepare($query);
+        $result = $this->getValue($queryString);
 
-        $authorCount->execute();
-        $authorCount = $authorCount->fetchColumn();
-
-        return $authorCount;
+        return $result;
     }
 
     public function getList(iterable $args)
@@ -66,19 +61,17 @@ class Model_Authors extends \core\Model implements IModelGet, IModelGetList
 
     public function get($authorId)
     {
+        $params = [];
+        $params["id"] = $authorId;
+        $params["offset"] = 0;
 
         $queryString = str_replace("WHERE TRUE", "WHERE user.id=:id", self::QUERY_BASE);
-        $query = $this->pdo->prepare($queryString);
 
-        $query->bindParam("id", $authorId);
-        $query->bindValue("offset", 0);
+        $result = $this->getOne($queryString, $params);
 
-        $query->execute();
+        $result = $this->postWork($result);
 
-        $info = $query->fetch(\PDO::FETCH_ASSOC);
-        $info = $this->postWork($info);
-
-        return $info;
+        return $result;
     }
 
 }

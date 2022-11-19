@@ -8,7 +8,6 @@
 </section>
 
 <script src="/assets/js/authors.js"></script>
-<script>loadCSS("/assets/css/posts.css")</script>
 <script>
     let moreAuthorsBtn = $(".moreAuthors");
     moreAuthorsBtn.hide();

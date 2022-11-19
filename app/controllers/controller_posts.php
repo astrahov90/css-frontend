@@ -1,12 +1,13 @@
 <?php
 
+namespace controllers;
 
 class Controller_Posts extends \core\Controller
 {
-    function __construct($pdo)
+    function __construct($dbh)
     {
         parent::__construct();
-        $this->model = new Model_Posts($pdo);
+        $this->model = new \models\Model_Posts($dbh);
         $this->view = new \core\View();
     }
 

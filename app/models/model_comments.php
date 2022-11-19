@@ -1,9 +1,12 @@
 <?php
 
+namespace models;
+
 use core\interfaces\IModelCreate;
 use core\interfaces\IModelGetList;
+use core\interfaces\IModelPostWork;
 
-class Model_Comments extends \core\Model implements IModelGetList, IModelCreate
+class Model_Comments extends \core\Model implements IModelGetList, IModelCreate, IModelPostWork
 {
 
     const QUERY_BASE = "SELECT
@@ -22,34 +25,29 @@ class Model_Comments extends \core\Model implements IModelGetList, IModelCreate
 
     public function getPage(iterable $args)
     {
-
-        $offset = $args['offset'];
-        $postId = $args['postId'];
+        $params = [];
+        $params["offset"] = $args["offset"];
+        $params["postId"] = $args["postId"];
 
         $queryString = self::QUERY_BASE;
-        $query = $this->pdo->prepare($queryString);
-        $query->bindParam("postId", $postId);
-        $query->bindParam("offset", $offset);
-        $query->execute();
 
-        $comments = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $this->getAll($queryString, $params);
 
-        $comments = array_map([$this,'postWork'], $comments);
+        $result = array_map(array($this, 'postWork'), $result);
 
-        return $comments;
+        return $result;
     }
 
     public function getCount(iterable $args)
     {
-        $postId = $args['postId'];
+        $params = [];
+        $params["postId"] = $args["postId"];
 
-        $query = "SELECT COUNT(id) FROM comments WHERE post_id=:postId";
-        $commentsCount = $this->pdo->prepare($query);
-        $commentsCount->bindParam("postId", $postId);
-        $commentsCount->execute();
-        $commentsCount = $commentsCount->fetchColumn();
+        $queryString = "SELECT COUNT(id) FROM comments WHERE post_id=:postId";
 
-        return $commentsCount;
+        $result = $this->getValue($queryString, $params);
+
+        return $result;
     }
 
     public function getList(iterable $args)
@@ -64,21 +62,16 @@ class Model_Comments extends \core\Model implements IModelGetList, IModelCreate
 
     public function create(iterable $args)
     {
-        $postId = $args['postId'];
-        $body = $args['body'];
-        $authorId = $args['authorId'];
+        $params = [];
+        $params["post_id"] = $args['postId'];
+        $params["body"] = $args['body'];
+        $params["author_id"] = $args['authorId'];
+        $params["created_at"] = time();
 
-        $queryString = "INSERT INTO comments (post_id, author_id, body, created_at) VALUES (:postId, :authorId, :body, :created_at)";
+        $queryString = "INSERT INTO comments (post_id, author_id, body, created_at) VALUES (:post_id, :author_id, :body, :created_at)";
 
-        $query = $this->pdo->prepare($queryString);
+        $recordId = $this->createOne($queryString, $params);
 
-        $query->bindParam("postId", $postId);
-        $query->bindParam("authorId", $authorId);
-        $query->bindParam("body", $body);
-        $query->bindValue("created_at", time());
-
-        $query->execute();
-
-        return true;
+        return $recordId;
     }
 }

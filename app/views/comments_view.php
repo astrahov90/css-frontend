@@ -59,9 +59,8 @@
     </div>
 </section>
 
-<script>loadCSS("/assets/css/posts.css")</script>
 <script>
-    let postId = "<?php echo $post['id'] ?>";
+    let postId = "<?php echo $post['id']?>";
 
     let moreCommentsBtn = $(".moreComments");
     moreCommentsBtn.hide();

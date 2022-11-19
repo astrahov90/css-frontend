@@ -15,8 +15,6 @@
 </section>
 <script src="/assets/js/authors.js"></script>
 <script src="/assets/js/posts.js"></script>
-<script>loadCSS("/assets/css/authors.css")</script>
-<script>loadCSS("/assets/css/posts.css")</script>
 
 <script>
     let userId = "<?php echo $authorId ?>";
