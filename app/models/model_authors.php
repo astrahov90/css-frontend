@@ -50,13 +50,7 @@ class Model_Authors extends \core\Model implements IModelGet, IModelGetList, IMo
 
     public function getList(iterable $args)
     {
-
-        $result = [];
-        $result["authors"] = $this->getPage($args);
-        $result["totalCount"] = $this->getCount($args);
-        $result["currentCount"] = $args['offset'] + count($result["authors"]);
-
-        return $result;
+        return parent::getList($args);
     }
 
     public function get($authorId)

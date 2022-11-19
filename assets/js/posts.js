@@ -56,7 +56,7 @@ function getPostsCommon(authorId=false) {
 
     $.get(querystring).done(function (data) {
 
-        data.posts.forEach(function (elem, key) {
+        data.data.forEach(function (elem, key) {
             let avatarField = "<img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'>";
             if (authorId){
                 avatarField = "";
@@ -116,7 +116,7 @@ function getPostComments(postId) {
 
     $.get(querystring).done(function (data) {
 
-        data.comments.forEach(function (elem, key) {
+        data.data.forEach(function (elem, key) {
             let curIndex = ++curCount;
             let newElement = "<div class='row comment d-flex'>\n" +
                 "                <div class='col-2 d-flex flex-column align-items-stretch'>\n" +

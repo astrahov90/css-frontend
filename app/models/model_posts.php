@@ -27,16 +27,6 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
         return $elem;
     }
 
-    public function getList(iterable $args)
-    {
-        $result = [];
-        $result["posts"] = $this->getPage($args);
-        $result["totalCount"] = $this->getCount($args);
-        $result["currentCount"] = $args['offset'] + count($result["posts"]);
-
-        return $result;
-    }
-
     public function getPage(iterable $args)
     {
 
@@ -80,6 +70,11 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
         $result = $this->getValue($queryString, $params);
 
         return $result;
+    }
+
+    public function getList(iterable $args)
+    {
+        return parent::getList($args);
     }
 
     public function get($postId)
