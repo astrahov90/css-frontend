@@ -4,7 +4,7 @@ namespace core;
 
 use core\interfaces\IModelDB;
 
-class Model implements IModelDB
+abstract class Model implements IModelDB
 {
     private \PDO $dbh;
 
@@ -32,7 +32,7 @@ class Model implements IModelDB
         return substr(strtr(base64_encode(random_bytes(32)), '+/', '-_'), 0, 32);
     }
 
-    public function getValue($queryString, $params)
+    public function getValue($queryString, $params=[])
     {
         $query = $this->dbh->prepare($queryString);
         $query->execute($params);

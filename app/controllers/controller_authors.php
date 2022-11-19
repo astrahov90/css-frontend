@@ -3,13 +3,6 @@
 namespace controllers;
 class Controller_Authors extends \core\Controller
 {
-    function __construct($dbh)
-    {
-        parent::__construct();
-        $this->model = new \models\Model_Authors($dbh);
-        $this->view = new \core\View();
-    }
-
     function action_getAuthor()
     {
         $authorId = $_REQUEST["authorId"]??null;

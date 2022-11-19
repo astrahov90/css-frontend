@@ -4,13 +4,6 @@ namespace controllers;
 
 class Controller_Login extends \core\Controller
 {
-    function __construct($dbh)
-    {
-        parent::__construct();
-        $this->model = new \models\Model_Login($dbh);
-        $this->view = new \core\View();
-    }
-
     function action_index()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -4,7 +4,7 @@ namespace db;
 
 use core\Config;
 
-class SQLiteConnection
+class SQLiteConnection implements IDBConnection
 {
     private $pdo;
 
