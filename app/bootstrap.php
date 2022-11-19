@@ -1,5 +1,7 @@
 <?php
 
+use \core\Router;
+
 error_reporting(E_ERROR | E_PARSE);
 
 session_start();
@@ -12,14 +14,6 @@ spl_autoload_register(function ($className) {
     }
 });
 
-$dbh = null;
-try {
-    $dbh = (new \db\SQLiteConnection())->connect();
-    if ($dbh == null)
-        throw new \HttpException();
+$dbh = (new \db\DBHandler(new \db\SQLiteConnection()))->connect();
 
-} catch (\Exception $e) {
-
-}
-
-\core\Router::start($dbh);
+Router::start($dbh);

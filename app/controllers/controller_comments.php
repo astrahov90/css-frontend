@@ -4,13 +4,6 @@ namespace  controllers;
 
 class Controller_Comments extends \core\Controller
 {
-    function __construct($dbh)
-    {
-        parent::__construct();
-        $this->model = new \models\Model_Comments($dbh);
-        $this->view = new \core\View();
-    }
-
     function action_getCommentsByPost()
     {
 
