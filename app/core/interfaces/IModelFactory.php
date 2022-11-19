@@ -11,5 +11,5 @@ namespace core\interfaces;
 
 interface IModelFactory
 {
-    function getModel($model_name, $dbh);
+    public static function build($model_name);
 }
