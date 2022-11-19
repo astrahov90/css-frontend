@@ -8,6 +8,8 @@ abstract class Controller
     public $model;
     public $view;
 
+    const ACTION_PREFIX = 'action_';
+
     function __construct($view)
     {
         $this->view = $view;
@@ -17,18 +19,19 @@ abstract class Controller
     {
     }
 
-    function setModel($model_name, $dbh)
+    function setModel($class_name)
     {
-        $this->model = (new ModelFactory())->getModel($model_name, $dbh);
+        $this->model = ModelFactory::build($class_name);
     }
 
     function runAction($action_name, $object_id)
     {
-        if (method_exists($this, $action_name)) {
+        $fullActionName = self::ACTION_PREFIX.$action_name;
+        if (method_exists($this, $fullActionName)) {
             if (isset($object_id))
-                $this->$action_name($object_id);
+                $this->$fullActionName($object_id);
             else
-                $this->$action_name();
+                $this->$fullActionName();
         } else {
             return false;
         }

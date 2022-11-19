@@ -14,6 +14,4 @@ spl_autoload_register(function ($className) {
     }
 });
 
-$dbh = (new \db\DBHandler(new \db\SQLiteConnection()))->connect();
-
-Router::start($dbh);
+Router::start();

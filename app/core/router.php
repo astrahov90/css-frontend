@@ -4,7 +4,7 @@ namespace core;
 
 class Router
 {
-    static function start($dbh)
+    static function start()
     {
         $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
@@ -14,15 +14,10 @@ class Router
         $object_id = $matches['id']?:null;
         $action_name = $matches['action']?:'index';
 
-        $controller_name = 'controllers\Controller_' . $class_name;
-        $model_name = 'models\Model_' . $class_name;
-        $action_name = 'action_' . $action_name;
-
-        $controller = (new ControllerFactory())->getController($controller_name);
+        $controller = ControllerFactory::build($class_name);
         if ($controller===null)
             self::ErrorPage404();
 
-        $controller->setModel($model_name, $dbh);
         if ($controller->runAction($action_name, $object_id)===false)
             self::ErrorPage404();
 
