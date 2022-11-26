@@ -20,26 +20,26 @@
                     <label for="comment" class="form-label">Добавить комментарий</label>
                     <div class="clearfix"></div>
                     <div class="btn-group mt-2 mb-2" role="group">
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-bold" title="Полужирный">
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-bold" title="Полужирный">
                             <span style="font-weight: bold">B</span></button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-italic" title="Курсив">
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-italic" title="Курсив">
                             <span style="font-style: italic">I</span></button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-underline"
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-underline"
                                 title="Подчеркнутый"><span style="text-decoration: underline">U</span></button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-line-through"
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-line-through"
                                 title="Зачеркнутый"><span style="text-decoration: line-through">S</span></button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-quote"
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-quote"
                                 title="Цитирование"><span style="font-weight: bold">""</span></button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-url" title="Гиперссылка">
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-url" title="Гиперссылка">
                             url
                         </button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-img" title="Изображение">
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-img" title="Изображение">
                             img
                         </button>
-                        <button type="button" class="btn btn-outline-primary bbcode" id="text-color"
+                        <button type="button" tabindex="-1" class="btn btn-outline-primary bbcode" id="text-color"
                                 title="Цвет текста">color
                         </button>
-                        <input type="color" class="btn btn-outline-primary" id="text-color-select" title="Цвет">
+                        <input type="color" tabindex="-1" class="btn btn-outline-primary" id="text-color-select" title="Цвет">
                     </div>
                     <textarea class="form-control" name="body" id="comment" placeholder="Текст комментария"
                               required></textarea>
