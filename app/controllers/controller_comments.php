@@ -6,11 +6,7 @@ class Controller_Comments extends \core\Controller
 {
     function action_getCommentsByPost()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodGet();
 
         $offset = $_REQUEST['offset']??0;
         $postId = $_REQUEST['postId']??null;
@@ -29,11 +25,7 @@ class Controller_Comments extends \core\Controller
 
     function action_addCommentToPost()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodPost();
 
         if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
         {

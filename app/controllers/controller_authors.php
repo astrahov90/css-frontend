@@ -5,6 +5,8 @@ class Controller_Authors extends \core\Controller
 {
     function action_getAuthor()
     {
+        $this->checkMethodGet();
+
         $authorId = $_REQUEST["authorId"]??null;
 
         if ($authorId == null)
@@ -28,6 +30,8 @@ class Controller_Authors extends \core\Controller
 
     function action_getUsers()
     {
+        $this->checkMethodGet();
+
         $offset = $_REQUEST['offset']??0;
 
         $result = $this->model->getList(compact(['offset']));

@@ -6,14 +6,10 @@ class Controller_Posts extends \core\Controller
 {
     function action_getPosts()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodGet();
 
         $offset = $_REQUEST["offset"]??0;
-        $newest = isset($_REQUEST["newest"])?true:false;
+        $newest = isset($_REQUEST["newest"]);
         $authorId = $_REQUEST["authorId"]??null;
 
         $result = $this->model->getList(compact(['offset','newest','authorId']));
@@ -24,11 +20,7 @@ class Controller_Posts extends \core\Controller
 
     function action_getPost()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodGet();
 
         $postId = $_REQUEST["postId"]??null;
 
@@ -59,11 +51,7 @@ class Controller_Posts extends \core\Controller
 
     function action_getComments()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodGet();
 
         $offset = 0;
         if (isset($_REQUEST["offset"]))
@@ -77,11 +65,7 @@ class Controller_Posts extends \core\Controller
 
     function action_addPost()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodPost();
 
         if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
         {
@@ -102,11 +86,7 @@ class Controller_Posts extends \core\Controller
 
     function action_like($postId)
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodPost();
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, true);
@@ -144,11 +124,7 @@ class Controller_Posts extends \core\Controller
 
     function action_rating($postId)
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodGet();
 
         $ratingCount = $this->model->getPostRating($postId);
 

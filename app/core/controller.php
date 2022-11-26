@@ -36,4 +36,22 @@ abstract class Controller
             return false;
         }
     }
+
+    protected function checkMethodGet()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
+        {
+            http_response_code(405);
+            die();
+        }
+    }
+
+    protected function checkMethodPost():void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
+        {
+            http_response_code(405);
+            die();
+        }
+    }
 }
