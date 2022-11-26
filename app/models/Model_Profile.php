@@ -7,7 +7,6 @@ use core\interfaces\IModelPostWork;
 
 class Model_Profile extends \core\Model implements IModelGet, IModelPostWork
 {
-
     const QUERY_BASE = "SELECT
         * from user WHERE id=:id";
 
