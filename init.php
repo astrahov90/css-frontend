@@ -1,5 +1,20 @@
 <?php
 
+error_reporting(E_ERROR | E_PARSE);
+
+require str_replace("\\", DIRECTORY_SEPARATOR, __DIR__.'/vendor/autoload.php');
+
+spl_autoload_register(function ($className) {
+    $path = __DIR__ . '/' . $className . '.php';
+    $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
+    if (is_file($path)) {
+        require_once $path;
+    }
+});
+
+$dotenv = Dotenv\Dotenv::createImmutable(str_replace("\\", DIRECTORY_SEPARATOR,__DIR__.'/'));
+$dotenv->load();
+
 if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
     ?>
 
@@ -18,7 +33,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
 } else if ($argv[1]=='prepareSQLite'){
     include ('app'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'config.php');
 
-    $path = \core\Config::PATH_TO_SQLITE_FILE;
+    $path = \core\Config::get_db_host();
     if (file_exists($path))
     {
         print_r("SQL already prepared" . PHP_EOL);
@@ -55,7 +70,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
 } else if ($argv[1]=='prepareSampleData'){
     include ('app'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'config.php');
 
-    $path = \core\Config::PATH_TO_SQLITE_FILE;
+    $path = \core\Config::get_db_host();
     if (!file_exists($path) || !filesize($path))
     {
         print_r("SQL is not prepared" . PHP_EOL);

@@ -6,7 +6,6 @@ use core\interfaces\IModelFactory;
 
 class ModelFactory implements IModelFactory
 {
-
     const MODEL_PREFIX = 'models\Model_';
 
     public static function build($class_name) : ?Model

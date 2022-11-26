@@ -10,7 +10,7 @@ class Router
 
         preg_match('/\/((?P<controller>\w+)\/?)((?P<id>\d*)\/)?((?P<action>\w*)\/?)?/', $uri, $matches);
 
-        $class_name = $matches['controller']?:'Main';
+        $class_name = ucfirst($matches['controller']?:'Main');
         $object_id = $matches['id']?:null;
         $action_name = $matches['action']?:'index';
 

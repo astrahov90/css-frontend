@@ -6,8 +6,8 @@ services:
     build: .
     ports:
       - 20080:80
-    volumes:
+    #volumes:
       # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      #- ~/.composer-docker/cache:/root/.composer/cache:delegated
       # Mount source-code for development
       #- ./:/var/www/html
