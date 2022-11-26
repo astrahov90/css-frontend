@@ -1,9 +1,7 @@
-<script src="/assets/js/posts.js"></script>
-
 <section class="section-body bg-light">
     <div class="container bg-light">
         <div class="mt-2">
-            <form method="post" action="/posts/addPost">
+            <form id='new-post-form' method="post" action="/posts/addPost">
                 <label for="post" class="form-title">Добавить новый пост</label>
                 <div class="clearfix"></div>
                 <input type="text" class="form-control" name="title" placeholder="Введите заголовок поста">
@@ -41,7 +39,34 @@
     </div>
 </section>
 
-<script>
+<script type="module">
+    $("#new-post-form").validate({
+        rules: {
+            title: {required: true},
+            body: {required: true},
+        },
+        messages: {
+            title: "Введите тему поста",
+            body: "Введите текст поста",
+        }
+    });
+
+    $("#new-post-form").submit(function (e){
+        let form = $(this);
+
+        e.preventDefault();
+
+        if (form.valid())
+        {
+            $.post(form.attr('action'),form.serialize())
+                .then(result=>{
+                    let postId = result.id;
+                    document.location.href = document.location.origin + "/posts/" + postId + "/comments";
+                });
+        }
+        return false;
+    })
+
     let previewData = $("#preview-data");
     previewData.hide();
 
@@ -114,5 +139,4 @@
 
         $("#post").val(curText);
     });
-
 </script>

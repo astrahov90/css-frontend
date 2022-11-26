@@ -36,8 +36,7 @@ class Controller_Comments extends \core\Controller
 
         $this->model->create(compact(['postId','body','authorId']));
 
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/posts/" . $postId . "/comments/";
-        header("Location: " . $url);
+        die();
     }
 
 }

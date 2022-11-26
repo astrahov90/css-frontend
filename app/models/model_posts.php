@@ -114,7 +114,10 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
         $params["rating"] = ($likeSign ? 1 : -1);
 
         $this->createOne($queryString, $params);
+    }
 
+    public function getPostRating($postId)
+    {
         $queryString = "SELECT SUM(rating) AS likes_count FROM posts_likes WHERE post_id=:post_id;";
 
         $params = [];

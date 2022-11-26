@@ -73,17 +73,18 @@ class Controller_Posts extends \core\Controller
 
         $postId = $this->model->create(compact(['title','body','authorId']));
 
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/posts/" . $postId . "/comments/";
-        header("Location: " . $url);
+        $result = $this->model->get($postId);
+        header('Content-Type: application/json; charset=utf-8');
+        die(json_encode($result));
     }
 
-    function action_postLike($postId)
+    function action_like($postId)
     {
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, true);
     }
 
-    function action_postDisLike($postId)
+    function action_dislike($postId)
     {
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, false);
@@ -97,12 +98,21 @@ class Controller_Posts extends \core\Controller
         $result = [];
         if ($ratingSet) {
             $result['error'] = "Оценка уже выставлена";
-        } else {
-            $ratingCount = $this->model->addPostLike($authorId, $postId, $like);
-            $result['ratingCount'] = $ratingCount;
+            http_response_code(400);
+        }
+        else {
+            $this->model->addPostLike($authorId, $postId, $like);
         }
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
+    }
+
+    function action_rating($postId)
+    {
+        $ratingCount = $this->model->getPostRating($postId);
+
+        header('Content-Type: application/json; charset=utf-8');
+        die(json_encode($ratingCount));
     }
 }

@@ -470,10 +470,14 @@ a.btn{
     flex-grow: 1;
 }
 
-
-.post:not(:first-child) {
+.post {
     margin-top: 3rem;
 }
+
+.loaderBody+.post {
+    margin-top: initial;
+}
+
 .comment:not(:first-child) {
     margin-top: 3rem;
 }
