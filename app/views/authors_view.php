@@ -7,17 +7,16 @@
     </div>
 </section>
 
-<script src="/assets/js/authors.js"></script>
-<script>
+<script type="module">
     let moreAuthorsBtn = $(".moreAuthors");
     moreAuthorsBtn.hide();
 
     $(document).ready(function () {
-        loadUsers();
+        loadAuthorsListData();
     });
 
     moreAuthorsBtn.click(function () {
-        loadUsers();
+        loadAuthorsListData();
     });
 
 </script>

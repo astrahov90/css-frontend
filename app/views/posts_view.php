@@ -7,9 +7,7 @@
     </div>
 </section>
 
-<script src="/assets/js/posts.js"></script>
-
-<script>
+<script type="module">
     let morePostsBtn = $(".morePosts");
 
     morePostsBtn.hide();
@@ -20,34 +18,36 @@
         }
     });
 
-    function scrollIntoViewIfNeeded($target) {
-        if ($target.offset()) {
-            let targetOffset = $target.offset();
-            let targetPosition = $target.position();
-
-            let targetFullPosition = targetOffset.top + targetPosition.top;
-
-            if (targetFullPosition + $target.height() >
-                $(window).scrollTop() + (
-                    window.innerHeight || document.documentElement.clientHeight
-                )) {
-                //scroll down
-                $("html,body").animate({
-                        scrollTop: targetFullPosition -
-                        (window.innerHeight || document.documentElement.clientHeight)
-                        + $target.height() + 15
-                    }
-                );
-            }
-        }
-    }
-
     $(document).ready(function () {
-        getMorePosts(false);
+        loadPostsData(false);
     });
 
     morePostsBtn.click(function () {
-        getMorePosts();
+        loadPostsData();
+    });
+
+    $('body').on('click','.rating-arrow', function () {
+        let curPostId;
+
+        if (typeof postId !== 'undefined')
+        {
+            curPostId = postId;
+        }
+        else
+        {
+            curPostId = $(this).closest(".row.post").find('.postId').val();
+        }
+
+        let like = true;
+        if ($(this).hasClass('rating-down')){
+            like = false;
+        }
+
+        let ratingField = $(this).closest('.row').find('.rating-count');
+
+        ratePost(curPostId, like, ratingField);
+
+        return false;
     });
 
 </script>

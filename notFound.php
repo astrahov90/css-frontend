@@ -15,22 +15,21 @@
     <link rel="stylesheet" href="/assets/css/reset.css">
     <script src="/assets/js/jquery-3.6.1.js"></script>
     <script src="/assets/js/jquery.validate.js"></script>
-    <script src="/assets/js/common.js"></script>
     <link rel="icon" href="/assets/img/logo.svg">
     <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 <body>
-<?php include 'app/views/layout/header.php' ?>
+    <?php include 'app/views/layout/header.php' ?>
 
-<section class="section-body bg-light section-middle">
-    <div class="container bg-light">
-        <div class="row">
-            <div class="col-12">Страница не найдена, обратитесь к разработчикам.
+    <section class="section-body bg-light section-middle">
+        <div class="container bg-light">
+            <div class="row">
+                <div class="col-12">Страница не найдена, обратитесь к разработчикам.
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<?php include 'app/views/layout/footer.php' ?>
-</body>
+    <?php include 'app/views/layout/footer.php' ?>
+    </body>
 </html>

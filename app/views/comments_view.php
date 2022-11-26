@@ -1,12 +1,10 @@
-<script src="/assets/js/posts.js"></script>
-
 <section class="section-body bg-light">
     <div class="container bg-light">
-        <div class='row post'>
-            <!-- load post info -->
-        </div>
         <div class="loaderBody bg-light">
             <div id="loader"></div>
+        </div>
+        <div class='row post'>
+            <!-- load post info -->
         </div>
         <div class='clearfix'></div>
         <div class="row mt-2 hasComments">
@@ -17,7 +15,7 @@
             <span>Для добавления комментария необходимо </span><a class="login-link" href="/login/">авторизоваться</a>
         <?php else: ?>
             <div class="mt-2">
-                <form method="post" action="/comments/addCommentToPost">
+                <form id='new-post-form' method="post" action="/comments/addCommentToPost">
                     <input type="hidden" name="postId" value="<?php echo $post['id'] ?>">
                     <label for="comment" class="form-label">Добавить комментарий</label>
                     <div class="clearfix"></div>
@@ -59,7 +57,7 @@
     </div>
 </section>
 
-<script>
+<script type="module">
     let postId = "<?php echo $post['id']?>";
 
     let moreCommentsBtn = $(".moreComments");
@@ -85,12 +83,12 @@
     });
 
     $(document).ready(function () {
-        getPostInfo(postId);
-        getPostComments(postId);
+        loadPostInfo(postId);
+        loadCommentsData(postId);
     });
 
     moreCommentsBtn.click(function () {
-        getPostComments(postId);
+        loadCommentsData(postId);
     });
 
     $(".bbcode").click(function () {
@@ -154,6 +152,55 @@
         curText = curText.slice(0, curSelectionStart) + curSelection + curText.slice(curSelectionEnd);
 
         $("#comment").val(curText);
+    });
+
+    $("#new-post-form").validate({
+        rules: {
+            title: {required: true},
+            body: {required: true},
+        },
+        messages: {
+            title: "Введите тему поста",
+            body: "Введите текст поста",
+        }
+    });
+    $("#new-post-form").submit(function (e){
+        let form = $(this);
+
+        e.preventDefault();
+
+        if (form.valid())
+        {
+            $.post(form.attr('action'),form.serialize())
+                .then(result=>{
+                    document.location.href = document.location.origin + "/posts/" + postId + "/comments";
+                });
+        }
+        return false;
+    })
+
+    $('body').on('click','.rating-arrow', function () {
+        let curPostId;
+
+        if (typeof postId !== 'undefined')
+        {
+            curPostId = postId;
+        }
+        else
+        {
+            curPostId = $(this).closest(".row.post").find('.postId').val();
+        }
+
+        let like = true;
+        if ($(this).hasClass('rating-down')){
+            like = false;
+        }
+
+        let ratingField = $(this).closest('.row').find('.rating-count');
+
+        ratePost(curPostId, like, ratingField);
+
+        return false;
     });
 
 </script>

@@ -13,14 +13,14 @@
         <label class="morePosts">Еще...</label>
     </div>
 </section>
-<script src="/assets/js/authors.js"></script>
-<script src="/assets/js/posts.js"></script>
 
-<script>
-    let userId = "<?php echo $authorId ?>";
+<script type="module">
 
-    let mortPostsBtn = $(".morePosts");
-    mortPostsBtn.hide();
+    let authorId = "<?php echo $authorId ?>";
+
+    let morePostsBtn = $(".morePosts");
+
+    morePostsBtn.hide();
 
     $(".card-read-more-button").click(function (e) {
         if ($("#" + $(this).attr("for")).is(":not(:checked)")) {
@@ -29,12 +29,36 @@
     });
 
     $(document).ready(function () {
-        getUserInfo(userId);
-        getUserPosts(userId);
+        loadAuthorInfo(authorId);
+        loadAuthorsPostsData(authorId);
     });
 
-    mortPostsBtn.click(function () {
-        getUserPosts(userId);
+    morePostsBtn.click(function () {
+        loadAuthorsPostsData(authorId);
+    });
+
+    $('body').on('click','.rating-arrow', function () {
+        let curPostId;
+
+        if (typeof postId !== 'undefined')
+        {
+            curPostId = postId;
+        }
+        else
+        {
+            curPostId = $(this).closest(".row.post").find('.postId').val();
+        }
+
+        let like = true;
+        if ($(this).hasClass('rating-down')){
+            like = false;
+        }
+
+        let ratingField = $(this).closest('.row').find('.rating-count');
+
+        ratePost(curPostId, like, ratingField);
+
+        return false;
     });
 
 </script>

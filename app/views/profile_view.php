@@ -41,6 +41,3 @@
         </div>
     </div>
 </section>
-
-<script src="/assets/js/posts.js"></script>
-<script>loadCSS("/assets/css/users.css")</script>

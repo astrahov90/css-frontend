@@ -8,9 +8,10 @@ trait GetListTrait
     public function getList(iterable $args)
     {
         $result = [];
-        $result["data"] = $this->getPage($args);
-        $result["totalCount"] = $this->getCount($args);
-        $result["currentCount"] = $args['offset'] + count($result["data"]);
+        $result['meta'] = [];
+        $result['data'] = $this->getPage($args);
+        $result['meta']['total'] = $this->getCount($args);
+        $result['meta']['to'] = $args['offset'] + count($result['data']);
 
         return $result;
     }

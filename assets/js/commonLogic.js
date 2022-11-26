@@ -1,14 +1,4 @@
 
-function loadCSS(filename){
-
-    let file = document.createElement("link");
-    file.setAttribute("rel", "stylesheet");
-    file.setAttribute("type", "text/css");
-    file.setAttribute("href", filename);
-    document.head.appendChild(file);
-
-}
-
 function topFunction() {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
@@ -23,20 +13,6 @@ function scrollFunction() {
     }
 }
 
-$(document).ready(function () {
-    window.onscroll = function() {scrollFunction()};
-
-    $('body').on('click','.login-link',function () {
-        document.location.href = $(this).attr('href') + "?redirect="+ document.location.pathname;
-        return false;
-    });
-
-    $(".logout-link").click(function () {
-        document.location.href = $(this).attr('href') + "?redirect="+ document.location.pathname;
-        return false;
-    });
-});
-
 function bbCodeDecode(curText){
     curText = curText.replace(/(\[b\])(.+?)(\[\/b\])/i,"<span style='font-weight: bold;'>$2</span>");
     curText = curText.replace(/(\[i\])(.+?)(\[\/i\])/i,"<span style='font-style: italic;'>$2</span>");
@@ -50,3 +26,33 @@ function bbCodeDecode(curText){
 
     return curText;
 }
+
+function scrollIntoViewIfNeeded($target) {
+    if ($target.offset()) {
+        let targetOffset = $target.offset();
+        let targetPosition = $target.position();
+
+        let targetFullPosition = targetOffset.top + targetPosition.top;
+
+        if (targetFullPosition + $target.height() >
+            $(window).scrollTop() + (
+                window.innerHeight || document.documentElement.clientHeight
+            )) {
+
+            $("html,body").animate({scrollTop: targetFullPosition -
+                    (window.innerHeight || document.documentElement.clientHeight)
+                    + $target.height() + 15}
+            );
+        }
+    }
+}
+
+function checkNewestPostsFlag() {
+    return location.pathname.startsWith('/newest');
+}
+
+function hidePreloader(){
+    $(".loaderBody").hide();
+}
+
+export {bbCodeDecode, topFunction, scrollFunction, scrollIntoViewIfNeeded, checkNewestPostsFlag, hidePreloader}

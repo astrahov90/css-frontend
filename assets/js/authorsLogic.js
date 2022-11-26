@@ -1,5 +1,33 @@
-function getUserElement(elem) {
-    let newElement = "<div class='row authors'>\n" +
+import {hidePreloader} from "./commonLogic.js";
+import {getAuthorsListPromise, getAuthorPromise} from "./apiLogic.js";
+
+function loadAuthorsListData() {
+    let offset = $(".row.authors").length;
+
+    fillAuthorsListData(getAuthorsListPromise(offset));
+}
+
+function fillAuthorsListData(dataPromise)
+{
+    dataPromise.then((result)=>{
+        let curCount = $(".row.authors").length;
+        result.data.forEach(function (elem, key) {
+            let avatarField = "<img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'>";
+
+            let curIndex = curCount + key;
+            let newElement = renderAuthorElement(elem, curIndex, avatarField);
+
+            $(newElement).insertBefore($(".moreAuthors"));
+        });
+
+        showHideGetMoreAuthorsButton(result.meta.to<result.meta.total)
+
+        hidePreloader();
+    })
+}
+
+function renderAuthorElement(elem) {
+    return "<div class='row authors'>\n" +
         "                <div class='col-2'>\n" +
         "                    <div class='container'><img class='avatar pt-1' src='" + elem.iconPath + "' alt='Аватар автора'></div>\n" +
         "                </div>\n" +
@@ -26,34 +54,27 @@ function getUserElement(elem) {
         "                    </div>\n" +
         "                </div>\n" +
         "            </div>";
-    return newElement;
 }
 
-function loadUsers() {
-    let curCount = $(".row.authors").length;
-    $.get("/authors/getUsers"+(location.search?location.search+"&":"?")+"offset="+curCount).done(function (data) {
-
-        data.data.forEach(function (elem, key) {
-            let newElement = getUserElement(elem);
-
-            $(newElement).insertBefore($(".moreAuthors"));
-        });
-
-        if (data.currentCount>=data.totalCount)
-        {
-            $(".moreAuthors").hide();
-        }
-        else {
-            $(".moreAuthors").show();
-        }
-
-        $(".loaderBody").remove();
-    });
+function loadAuthorInfo(authorId) {
+    fillAuthorData(getAuthorPromise(authorId));
 }
 
-function getUserInfo(authorId) {
-    $.get("/authors/getAuthor?authorId="+authorId).done(function (data) {
-        let newElement = getUserElement(data);
+function fillAuthorData(dataPromise)
+{
+    dataPromise.then((data)=>{
+        let avatarField = "<img class='avatar' src='"+data.iconPath+"' alt='Аватар автора'>";
+        let newElement = renderAuthorElement(data, 0, avatarField);
         $(".row.authors").replaceWith($(newElement));
-    });
+    })
 }
+
+function showHideGetMoreAuthorsButton(show=true)
+{
+    if (show)
+        $(".morePosts").show();
+    else
+        $(".morePosts").hide();
+}
+
+export {loadAuthorsListData, loadAuthorInfo}
