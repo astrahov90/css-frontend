@@ -16,6 +16,7 @@
         <?php else: ?>
             <div class="mt-2">
                 <form id='new-post-form' method="post" action="/comments/addCommentToPost">
+                    <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
                     <input type="hidden" name="postId" value="<?php echo $post['id'] ?>">
                     <label for="comment" class="form-label">Добавить комментарий</label>
                     <div class="clearfix"></div>

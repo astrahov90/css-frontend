@@ -22,6 +22,7 @@
                             <div class='card-body'>
                                 <p><?php echo $author['description'] ?></p>
                                 <form method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
                                     <div class="mt-1">
                                         <label for="formFile" class="form-label">Изменить аватар</label>
                                         <div class='clearfix'></div>
