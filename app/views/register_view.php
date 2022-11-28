@@ -1,6 +1,7 @@
 <section class="section-body bg-light section-middle">
     <div class="container bg-light">
         <form method="post" id="register-form" enctype="multipart/form-data">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
             <h2>Регистрация нового пользователя</h2>
             <label for="login" class="form-label">Логин</label>
             <input class="form-control" name="username" type="text" id="username" placeholder="Введите логин" required>

@@ -7,6 +7,7 @@ class Controller_Login extends \core\Controller
     function action_index()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->checkCSRFToken();
             if (isset($_REQUEST["username"]) && isset($_REQUEST["password"])) {
                 $userData = $this->model->get($_REQUEST["username"]);
                 if (password_verify($_REQUEST["password"], $userData['password_hash'])) {
@@ -42,27 +43,18 @@ class Controller_Login extends \core\Controller
 
     function action_logout()
     {
+        $this->checkAuthorization();
+        $this->checkMethodPost();
+        $this->checkCSRFToken();
         session_destroy();
 
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-
-        $queryArr = [];
-        parse_str($_SERVER['QUERY_STRING'], $queryArr);
-
-        $location = $url;
-        if (array_key_exists('redirect', $queryArr)) {
-            $location = $url . $queryArr['redirect'];
-            unset($queryArr['redirect']);
-            if (count($queryArr)) {
-                $location .= '?' . join('&', $queryArr);
-            }
-        }
-        header('Location: ' . $location);
+        header('Location: /');
     }
 
     function action_register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->checkCSRFToken();
             if (isset($_REQUEST["username"]) && isset($_REQUEST["password"]) && isset($_REQUEST["password_again"])
                 && isset($_REQUEST["email"]) && isset($_REQUEST["description"])) {
                 $checkUser = $this->model->get($_REQUEST["username"]);
