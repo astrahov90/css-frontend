@@ -1,6 +1,7 @@
 <section class="section-body bg-light section-middle">
     <div class="container bg-light">
         <form method="post" id="login-form">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
             <label for="login" class="form-label">Логин</label>
             <input class="form-control" name="username" type="text" id="username" placeholder="Введите логин" required>
             <div class="clearfix"></div>
