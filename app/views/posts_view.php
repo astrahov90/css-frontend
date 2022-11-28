@@ -45,7 +45,9 @@
 
         let ratingField = $(this).closest('.row').find('.rating-count');
 
-        ratePost(curPostId, like, ratingField);
+        let token = "<?php echo $_SESSION['token'] ?? '' ?>";
+
+        ratePost(curPostId, like, ratingField, token);
 
         return false;
     });

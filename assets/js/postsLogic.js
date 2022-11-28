@@ -167,8 +167,8 @@ function showHideGetMoreCommentsButton(show=true)
         $(".moreComments").hide();
 }
 
-function ratePost(postId, likeStatus, ratingField){
-    getPostSetRatePromise(postId, likeStatus)
+function ratePost(postId, likeStatus, ratingField, token){
+    getPostSetRatePromise(postId, likeStatus, token)
         .then(()=>{
             getPostGetRatePromise(postId).then(result=>{
                 ratingField.html(result);
