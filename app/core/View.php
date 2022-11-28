@@ -13,6 +13,12 @@ class View
 
         $title = "Пикомемсы - ваш сайт развлечений";
 
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        if ($requestMethod === 'GET')
+        {
+            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+        }
+
         include 'app/views/' . $template_view;
     }
 }
