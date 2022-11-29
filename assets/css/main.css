@@ -88,6 +88,10 @@ li a{
     white-space: pre;
 }
 
+.hidden {
+    display: none;
+}
+
 .pt-1{
     padding-top: 1em;
 }

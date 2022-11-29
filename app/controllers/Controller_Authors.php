@@ -25,7 +25,7 @@ class Controller_Authors extends \core\Controller
         $data = [];
         $data['authors'] = true;
 
-        $this->view->generate('app/views/authors_view.php', "template_view.php", $data);
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'authors.html'), $data);
     }
 
     function action_getUsers()
@@ -42,6 +42,6 @@ class Controller_Authors extends \core\Controller
 
     function action_posts($authorId)
     {
-        $this->view->generate('app/views/authors_posts_view.php', "template_view.php", compact(['authorId']));
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'authors-posts.html'), compact(['authorId']));
     }
 }

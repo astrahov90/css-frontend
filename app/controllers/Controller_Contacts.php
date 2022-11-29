@@ -6,6 +6,6 @@ class Controller_Contacts extends \core\Controller
 {
     function action_index()
     {
-        $this->view->generate('app/views/contacts_view.php', "template_view.php");
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'contacts.html'));
     }
 }

@@ -38,7 +38,7 @@ class Controller_Posts extends \core\Controller
 
     function action_index($model_id = null)
     {
-        $this->view->generate('app/views/post_view.php', "template_view.php");
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'posts.html'));
     }
 
     function action_comments($postId)
@@ -46,7 +46,7 @@ class Controller_Posts extends \core\Controller
         $data = [];
         $data["post"] = $this->model->get($postId);
 
-        $this->view->generate('app/views/comments_view.php', "template_view.php", $data);
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
     }
 
     function action_getComments()
