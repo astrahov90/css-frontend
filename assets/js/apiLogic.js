@@ -16,7 +16,7 @@ function getPostsListPromise(newest=false, offset=0, authorId=false) {
 }
 
 function getAuthorsListPromise(offset=0) {
-    let querystring = "/authors/getUsers"+(location.search?location.search+"&":"?")+"offset="+offset;
+    let querystring = "/authors/getAuthors"+(location.search?location.search+"&":"?")+"offset="+offset;
 
     return $.get(querystring).catch(
         reason=>{console.log(reason.response.data??reason.responseText);

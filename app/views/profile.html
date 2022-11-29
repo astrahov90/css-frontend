@@ -29,6 +29,7 @@
                                 <div class='card-body'>
                                     <p>{{ author['description'] }}</p>
                                     <form method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="token" value="{{ session.token??'' }}">
                                         <div class="mt-1">
                                             <label for="formFile" class="form-label">Изменить аватар</label>
                                             <div class='clearfix'></div>

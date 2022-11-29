@@ -2,6 +2,8 @@
 
 namespace controllers;
 
+use core\RedisCache;
+
 class Controller_Posts extends \core\Controller
 {
     function action_getPosts()
@@ -12,7 +14,12 @@ class Controller_Posts extends \core\Controller
         $newest = isset($_REQUEST["newest"]);
         $authorId = $_REQUEST["authorId"]??null;
 
-        $result = $this->model->getList(compact(['offset','newest','authorId']));
+        $redisKey = 'posts-getList-'.$offset.($newest?'newest':'best').($authorId?"-".$authorId:'');
+        $callback = function () use ($offset, $newest, $authorId){
+            return $this->model->getList(compact(['offset','newest','authorId']));
+        };
+
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -26,15 +33,20 @@ class Controller_Posts extends \core\Controller
 
         if ($postId == null)
         {
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
             die();
         }
 
-        $result = $this->model->get($postId);
+        $redisKey = 'posts-get-'.$postId;
+        $callback = function () use ($postId){
+            return $this->model->get($postId);
+        };
+
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
+
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
-
 
     function action_index($model_id = null)
     {
@@ -46,21 +58,10 @@ class Controller_Posts extends \core\Controller
         $data = [];
         $data["post"] = $this->model->get($postId);
 
+        $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+        $this->twig->addGlobal('session', $_SESSION);
+
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
-    }
-
-    function action_getComments()
-    {
-        $this->checkMethodGet();
-
-        $offset = 0;
-        if (isset($_REQUEST["offset"]))
-            $offset = $_REQUEST["offset"];
-
-        $result = $this->model->getCommentsByPost($offset, $_REQUEST["id"]);
-
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
     }
 
     function action_addPost()
@@ -76,6 +77,9 @@ class Controller_Posts extends \core\Controller
         $postId = $this->model->create(compact(['title','body','authorId']));
 
         $result = $this->model->get($postId);
+
+        RedisCache::clearCache('*posts-getList-*');
+
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -107,12 +111,14 @@ class Controller_Posts extends \core\Controller
 
         $result = [];
         if ($ratingSet) {
-            $result['error'] = "Оценка уже выставлена";
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
+            die("Оценка уже выставлена");
         }
         else {
             $this->model->addPostLike($authorId, $postId, $like);
         }
+
+        RedisCache::clearCache('*posts-getRating-*');
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -122,9 +128,14 @@ class Controller_Posts extends \core\Controller
     {
         $this->checkMethodGet();
 
-        $ratingCount = $this->model->getPostRating($postId);
+        $redisKey = 'posts-getRating-'.$postId;
+        $callback = function () use ($postId){
+            return $this->model->getPostRating($postId);
+        };
+
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
 
         header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($ratingCount));
+        die(json_encode($result));
     }
 }
