@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $title ?></title>
+    <title>{% block title %}Пикомемсы - ваш сайт развлечений{% endblock %}}</title>
     <link rel="stylesheet" href="/assets/css/reset.css">
     <script type="module" src="/assets/js/app.js"></script>
     <script src="/assets/js/jquery-3.6.1.js"></script>
@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 <body>
-<?php include 'layout/header.php' ?>
+    {{ include('layout/header.html') }}
 
-<?php include $content_view ?>
+    {% block content %}
+    {% endblock %}
 
-<?php include 'layout/footer.php' ?>
+    {{ include('layout/footer.html') }}
 </body>
 </html>
