@@ -14,21 +14,12 @@ class Controller_Posts extends \core\Controller
         $newest = isset($_REQUEST["newest"]);
         $authorId = $_REQUEST["authorId"]??null;
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'posts-getList-'.$offset.($newest?'newest':'best').($authorId?"-".$authorId:'');
+        $callback = function () use ($offset, $newest, $authorId){
+            return $this->model->getList(compact(['offset','newest','authorId']));
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->getList(compact(['offset','newest','authorId']));
-
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(60);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->getList(compact(['offset','newest','authorId']));*/
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -42,25 +33,17 @@ class Controller_Posts extends \core\Controller
 
         if ($postId == null)
         {
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
             die();
         }
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'posts-get-'.$postId;
+        $callback = function () use ($postId){
+            return $this->model->get($postId);
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->get($postId);
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
 
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(3600);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->get($postId);*/
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -95,10 +78,7 @@ class Controller_Posts extends \core\Controller
 
         $result = $this->model->get($postId);
 
-        $redisCache = RedisCache::getInstance();
-        $keysFounded = $redisCache->scanItems('*posts-getList-*');
-        if ($keysFounded)
-            $redisCache->deleteItems($keysFounded);
+        RedisCache::clearCache('*posts-getList-*');
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -131,17 +111,14 @@ class Controller_Posts extends \core\Controller
 
         $result = [];
         if ($ratingSet) {
-            $result['error'] = "Оценка уже выставлена";
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
+            die("Оценка уже выставлена");
         }
         else {
             $this->model->addPostLike($authorId, $postId, $like);
         }
 
-        $redisCache = RedisCache::getInstance();
-        $keysFounded = $redisCache->scanItems('*posts-getRating-*');
-        if ($keysFounded)
-            $redisCache->deleteItems($keysFounded);
+        RedisCache::clearCache('*posts-getRating-*');
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -151,21 +128,12 @@ class Controller_Posts extends \core\Controller
     {
         $this->checkMethodGet();
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'posts-getRating-'.$postId;
+        $callback = function () use ($postId){
+            return $this->model->getPostRating($postId);
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->getPostRating($postId);
-
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(3600);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->getPostRating($postId);*/
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));

@@ -13,25 +13,17 @@ class Controller_Authors extends \core\Controller
 
         if ($authorId == null)
         {
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
             die();
         }
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'authors-get-'.$authorId;
+        $callback = function () use ($authorId){
+            return $this->model->get($authorId);
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->get($authorId);
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
 
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(60);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->get($authorId);*/
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -50,21 +42,12 @@ class Controller_Authors extends \core\Controller
 
         $offset = $_REQUEST['offset']??0;
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'authors-getList-'.$offset;
+        $callback = function () use ($offset){
+            return $this->model->getList(compact(['offset']));
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->getList(compact(['offset']));
-
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(60);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->getList(compact(['offset']));*/
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));

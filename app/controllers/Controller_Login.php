@@ -97,10 +97,7 @@ class Controller_Login extends \core\Controller
                     die();
                 }
 
-                $redisCache = RedisCache::getInstance();
-                $keysFounded = $redisCache->scanItems('*authors-getList*');
-                if ($keysFounded)
-                    $redisCache->deleteItems($keysFounded);
+                RedisCache::clearCache('*authors-getList*');
 
                 $newUser = $this->model->get($_REQUEST['username']);
 

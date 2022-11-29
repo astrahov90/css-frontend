@@ -15,25 +15,16 @@ class Controller_Comments extends \core\Controller
 
         if ($postId == null)
         {
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
             die();
         }
 
-        $redisCache = RedisCache::getInstance();
         $redisKey = 'comments-getList-'.$postId.'-'.$offset;
+        $callback = function () use ($postId, $offset){
+            return $this->model->getList(compact(['offset','postId']));
+        };
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
-        {
-            $result = $this->model->getList(compact(['offset','postId']));
-
-            $cacheItem->set(json_encode($result));
-            $cacheItem->expiresAfter(60);
-            $redisCache->save($cacheItem);
-        }
-
-        /*$result = $this->model->getList(compact(['offset','postId']));*/
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -51,10 +42,7 @@ class Controller_Comments extends \core\Controller
 
         $this->model->create(compact(['postId','body','authorId']));
 
-        $redisCache = RedisCache::getInstance();
-        $keysFounded = $redisCache->scanItems('*comments-getList-'.$postId.'*');
-        if ($keysFounded)
-            $redisCache->deleteItems($keysFounded);
+        RedisCache::clearCache('*comments-getList-'.$postId.'*');
 
         die();
     }
