@@ -9,6 +9,7 @@
     <div class="container bg-light">
         <div class="mt-2">
             <form id='new-post-form' method="post" action="/posts/addPost">
+                <input type="hidden" name="token" value="{{ session.token??'' }}">
                 <label for="post" class="form-title">Добавить новый пост</label>
                 <div class="clearfix"></div>
                 <input type="text" class="form-control" name="title" placeholder="Введите заголовок поста">

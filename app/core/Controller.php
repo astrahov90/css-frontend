@@ -4,16 +4,14 @@ namespace core;
 
 abstract class Controller
 {
-
     protected $model;
     protected $view;
     protected $twig;
 
     const ACTION_PREFIX = 'action_';
 
-    function __construct($view, $twig)
+    function __construct($twig)
     {
-        $this->view = $view;
         $this->twig = $twig;
     }
 

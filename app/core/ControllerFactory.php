@@ -18,9 +18,13 @@ class ControllerFactory implements IControllerFactory
                 'debug' => true,
             ]);
 
+            if ($_SERVER['REQUEST_METHOD'] === 'GET')
+            {
+                $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            }
             $twig->addGlobal('session', $_SESSION);
 
-            $controller = new (self::CONTROLLER_PREFIX.$className)(ViewFactory::build(View::class), $twig);
+            $controller = new (self::CONTROLLER_PREFIX.$className)($twig);
             $controller->setModel($className);
 
             return $controller;
