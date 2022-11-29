@@ -1,7 +1,9 @@
 {
     "require": {
         "vlucas/phpdotenv": "^5.5",
-        "twig/twig": "^3.00"
+        "twig/twig": "^3.00",
+        "ext-redis": "^5.3",
+        "psr/cache": "^3.0"
     },
     "autoload": {
         "psr-4": { "": "app/" }

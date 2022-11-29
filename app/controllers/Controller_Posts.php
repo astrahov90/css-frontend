@@ -2,6 +2,8 @@
 
 namespace controllers;
 
+use core\RedisCache;
+
 class Controller_Posts extends \core\Controller
 {
     function action_getPosts()
@@ -12,7 +14,21 @@ class Controller_Posts extends \core\Controller
         $newest = isset($_REQUEST["newest"]);
         $authorId = $_REQUEST["authorId"]??null;
 
-        $result = $this->model->getList(compact(['offset','newest','authorId']));
+        $redisCache = RedisCache::getInstance();
+        $redisKey = 'posts-getList-'.$offset.($newest?'newest':'best').($authorId?"-".$authorId:'');
+
+        $cacheItem = $redisCache->getItem($redisKey);
+        $result = json_decode($cacheItem->get());
+        if (!$result)
+        {
+            $result = $this->model->getList(compact(['offset','newest','authorId']));
+
+            $cacheItem->set(json_encode($result));
+            $cacheItem->expiresAfter(60);
+            $redisCache->save($cacheItem);
+        }
+
+        /*$result = $this->model->getList(compact(['offset','newest','authorId']));*/
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
@@ -30,11 +46,24 @@ class Controller_Posts extends \core\Controller
             die();
         }
 
-        $result = $this->model->get($postId);
+        $redisCache = RedisCache::getInstance();
+        $redisKey = 'posts-get-'.$postId;
+
+        $cacheItem = $redisCache->getItem($redisKey);
+        $result = json_decode($cacheItem->get());
+        if (!$result)
+        {
+            $result = $this->model->get($postId);
+
+            $cacheItem->set(json_encode($result));
+            $cacheItem->expiresAfter(3600);
+            $redisCache->save($cacheItem);
+        }
+
+        /*$result = $this->model->get($postId);*/
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
-
 
     function action_index($model_id = null)
     {
@@ -46,21 +75,10 @@ class Controller_Posts extends \core\Controller
         $data = [];
         $data["post"] = $this->model->get($postId);
 
+        $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+        $this->twig->addGlobal('session', $_SESSION);
+
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
-    }
-
-    function action_getComments()
-    {
-        $this->checkMethodGet();
-
-        $offset = 0;
-        if (isset($_REQUEST["offset"]))
-            $offset = $_REQUEST["offset"];
-
-        $result = $this->model->getCommentsByPost($offset, $_REQUEST["id"]);
-
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
     }
 
     function action_addPost()
@@ -76,6 +94,12 @@ class Controller_Posts extends \core\Controller
         $postId = $this->model->create(compact(['title','body','authorId']));
 
         $result = $this->model->get($postId);
+
+        $redisCache = RedisCache::getInstance();
+        $keysFounded = $redisCache->scanItems('*posts-getList-*');
+        if ($keysFounded)
+            $redisCache->deleteItems($keysFounded);
+
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -114,6 +138,11 @@ class Controller_Posts extends \core\Controller
             $this->model->addPostLike($authorId, $postId, $like);
         }
 
+        $redisCache = RedisCache::getInstance();
+        $keysFounded = $redisCache->scanItems('*posts-getRating-*');
+        if ($keysFounded)
+            $redisCache->deleteItems($keysFounded);
+
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -122,9 +151,23 @@ class Controller_Posts extends \core\Controller
     {
         $this->checkMethodGet();
 
-        $ratingCount = $this->model->getPostRating($postId);
+        $redisCache = RedisCache::getInstance();
+        $redisKey = 'posts-getRating-'.$postId;
+
+        $cacheItem = $redisCache->getItem($redisKey);
+        $result = json_decode($cacheItem->get());
+        if (!$result)
+        {
+            $result = $this->model->getPostRating($postId);
+
+            $cacheItem->set(json_encode($result));
+            $cacheItem->expiresAfter(3600);
+            $redisCache->save($cacheItem);
+        }
+
+        /*$result = $this->model->getPostRating($postId);*/
 
         header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($ratingCount));
+        die(json_encode($result));
     }
 }
