@@ -1,0 +1,56 @@
+{% extends 'template.html' %}
+
+{% block title %}
+Пикомемсы - новый пост
+{% endblock %}
+
+{% block content %}
+<section class="section-body bg-light">
+    <div class="container bg-light">
+        <div class="mt-2">
+            <form id='new-post-form' method="post" action="/posts/addPost">
+                <input type="hidden" name="token" value="{{ session.token??'' }}">
+                <label for="post" class="form-title">Добавить новый пост</label>
+                <div class="clearfix"></div>
+                <input type="text" class="form-control" name="title" placeholder="Введите заголовок поста">
+                {{ include ('layout/bbCodeBar.html', {textField: '#post'}) }}
+                <textarea class="form-control" name="body" id="post" placeholder="Текст поста" required></textarea>
+                <div class="clearfix"></div>
+                <button class="btn btn-outline-primary mt-2" type="submit">Отправить</button>
+                {{ include ('layout/textPreview.html', {textField: '#post'}) }}
+            </form>
+        </div>
+    </div>
+</section>
+
+<script type="module">
+    let curForm = $("#new-post-form");
+
+    curForm.validate({
+        rules: {
+            title: {required: true},
+            body: {required: true},
+        },
+        messages: {
+            title: "Введите тему поста",
+            body: "Введите текст поста",
+        }
+    });
+
+    curForm.submit(function (e){
+        let form = $(this);
+
+        e.preventDefault();
+
+        if (form.valid())
+        {
+            $.post(form.attr('action'),form.serialize())
+                .then(result=>{
+                    let postId = result.id;
+                    document.location.href = document.location.origin + "/posts/" + postId + "/comments";
+                });
+        }
+        return false;
+    })
+</script>
+{% endblock %}

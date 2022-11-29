@@ -1,39 +1,39 @@
 <header class="bg-light">
     <a id="logo" href="/">
-        <img width="40px" height="32px" src="/assets/img/logo.svg">
+        <img alt="logo" width="40px" height="32px" src="/assets/img/logo.svg">
     </a>
     <div class="profile-menu">
-        <?php if (isset($_SESSION['isAuthorized']) && $_SESSION['isAuthorized']): ?>
-            <a class="dropdown-toggle" href="#"><?php echo $_SESSION['userName'] ?></a>
+        {% if session.isAuthorized %}
+            <a class="dropdown-toggle" href="#">{{ session.userName }}</a>
             <div class="flex-column d-flex dropdown-menu">
                 <div><a href="/profile/">Профиль</a></div>
                 <div>
                     <form method="post" action="/login/logout/">
-                        <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
+                        <input type="hidden" name="token" value="{{ session.token??'' }}">
                         <button type="submit" class="logout-link asText">Выйти</button>
                     </form>
                 </div>
             </div>
-        <?php else: ?>
+        {% else %}
             <a class="login-link clear-link" href="/login/">Войти</a>
-        <?php endif ?>
+        {% endif %}
     </div>
     <nav>
         <ul>
-            <li <?php if (isset($best)) echo 'class="active"' ?>>
+            <li {% if best %}class="active"{% endif %}>
                 <a href="/?best">Лучшее</a>
             </li>
-            <li <?php if (isset($newest)) echo 'class="active"' ?>>
+            <li {% if newest %}class="active"{% endif %}>
                 <a href="/?newest">Свежее</a>
             </li>
-            <li <?php if (isset($authors)) echo 'class="active"' ?>>
+            <li {% if authors %}class="active"{% endif %}>
                 <a href="/authors/">Авторы</a>
             </li>
-            <?php if (isset($_SESSION['isAuthorized']) && $_SESSION['isAuthorized']): ?>
-                <li <?php if (isset($newPost)) echo 'class="active"' ?> >
+            {% if session.isAuthorized %}
+                <li {% if newPost %}class="active"{% endif %}>
                     <a href="/?newPost">Новый пост</a>
                 </li>
-            <?php endif ?>
+            {% endif %}
         </ul>
     </nav>
 

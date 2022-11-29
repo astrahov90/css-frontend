@@ -32,11 +32,11 @@ class Controller_Login extends \core\Controller
                 } else {
                     $data = [];
                     $data['error'] = "Имя или пароль неверные.";
-                    $this->view->generate('app/views/login_view.php', "template_view.php", $data);
+                    echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'), $data);
                 }
             }
         } else {
-            $this->view->generate('app/views/login_view.php', "template_view.php");
+            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'));
         }
 
     }
@@ -84,7 +84,7 @@ class Controller_Login extends \core\Controller
 
                 if (!$result)
                 {
-                    http_response_code(400);
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
                     die();
                 }
 
@@ -99,7 +99,7 @@ class Controller_Login extends \core\Controller
                 header('Location: ' . $url);
             }
         } else {
-            $this->view->generate('app/views/register_view.php', "template_view.php");
+            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'));
         }
 
     }

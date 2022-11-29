@@ -12,7 +12,19 @@ class ControllerFactory implements IControllerFactory
     {
         if (class_exists(self::CONTROLLER_PREFIX.$className))
         {
-            $controller = new (self::CONTROLLER_PREFIX.$className)(ViewFactory::build(View::class));
+            $loader = new \Twig\Loader\FilesystemLoader(str_replace('\\', DIRECTORY_SEPARATOR,__DIR__.'/../views/'));
+            $twig = new \Twig\Environment($loader, [
+                'cache' => str_replace('\\', DIRECTORY_SEPARATOR,__DIR__.'/../views/cache'),
+                'debug' => true,
+            ]);
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET')
+            {
+                $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            }
+            $twig->addGlobal('session', $_SESSION);
+
+            $controller = new (self::CONTROLLER_PREFIX.$className)($twig);
             $controller->setModel($className);
 
             return $controller;

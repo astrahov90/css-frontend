@@ -1,0 +1,17 @@
+<button class="btn btn-outline-primary mt-2" type="button" id="preview">Предварительный просмотр
+</button>
+<div id="preview-data" class="hidden">
+    <label for="preview-data">Предпросмотр комментария</label>
+    <pre>Предпросмотр</pre>
+</div>
+
+<script type="module">
+    let previewField = $('{{ textField }}');
+
+    let previewData = $("#preview-data");
+
+    $("#preview").click(function () {
+        previewData.show();
+        previewData.find('pre').html(bbCodeDecode(previewField.val()));
+    });
+</script>
