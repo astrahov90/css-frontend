@@ -66,12 +66,8 @@ class Controller_Posts extends \core\Controller
     function action_addPost()
     {
         $this->checkMethodPost();
-
-        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
-        {
-            http_response_code(403);
-            die();
-        }
+        $this->checkCSRFToken();
+        $this->checkAuthorization();
 
         $title = $_REQUEST["title"];
         $body = $_REQUEST["body"];
@@ -87,6 +83,8 @@ class Controller_Posts extends \core\Controller
     function action_like($postId)
     {
         $this->checkMethodPost();
+        $this->checkCSRFToken();
+        $this->checkAuthorization();
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, true);
@@ -94,11 +92,9 @@ class Controller_Posts extends \core\Controller
 
     function action_dislike($postId)
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            http_response_code(405);
-            die();
-        }
+        $this->checkMethodPost();
+        $this->checkCSRFToken();
+        $this->checkAuthorization();
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, false);

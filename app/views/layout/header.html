@@ -5,10 +5,15 @@
     <div class="profile-menu">
         {% if session.isAuthorized %}
             <a class="dropdown-toggle" href="#">{{ session.userName }}</a>
-            <ul class="dropdown-menu">
-                <li><a href="/profile/">Профиль</a></li>
-                <li><a class="logout-link" id="" href="/login/logout/">Выйти</a></li>
-            </ul>
+            <div class="flex-column d-flex dropdown-menu">
+                <div><a href="/profile/">Профиль</a></div>
+                <div>
+                    <form method="post" action="/login/logout/">
+                        <input type="hidden" name="token" value="{{ session.token??'' }}">
+                        <button type="submit" class="logout-link asText">Выйти</button>
+                    </form>
+                </div>
+            </div>
         {% else %}
             <a class="login-link clear-link" href="/login/">Войти</a>
         {% endif %}

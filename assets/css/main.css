@@ -26,13 +26,9 @@ header > div, header > nav{
     padding-top: 10px;
 }
 
-header a:hover{
+header a:hover, header button.asText:hover{
     color: darkslategrey;
     font-weight: bold;
-}
-header nav li.active{
-    font-weight: bold;
-    color: gray;
 }
 
 footer {
@@ -274,10 +270,11 @@ li a{
      margin-top: 14px;
      background-color: white;
      border-radius: 1px;
-     border: solid 1px;
+     outline: auto;
      width: 7em;
      position: fixed;
      z-index: 2;
+     height: 30px;
  }
 
  .profile-menu:hover .dropdown-menu, .dropdown-menu:hover{
@@ -285,15 +282,28 @@ li a{
      transition-delay: 0s;
  }
 
- .dropdown-menu li a{
+ .dropdown-menu div{
      display: block;
      padding: 1em;
+     background-color: inherit;
  }
 
-
- .dropdown-menu li:hover{
-     background-color: rgba(0,0,255,0.1);
+ .dropdown-menu div:hover{
+     background-color: rgb(248,249,250);
+     text-decoration: underline;
  }
+
+button.asText {
+    background:none;
+    border:none;
+    margin:0;
+    padding:0;
+    cursor: pointer;
+
+    color: inherit;
+    font-size: inherit;
+    text-decoration: underline;
+}
 
  textarea {
      width: 95%;

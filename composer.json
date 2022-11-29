@@ -4,8 +4,6 @@
         "twig/twig": "^3.00"
     },
     "autoload": {
-        "classmap": [
-            "app/*"
-        ]
+        "psr-4": { "": "app/" }
     }
 }

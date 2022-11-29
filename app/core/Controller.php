@@ -39,11 +39,11 @@ abstract class Controller
         }
     }
 
-    protected function checkMethodGet()
+    protected function checkMethodGet():void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'GET')
         {
-            http_response_code(405);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
             die();
         }
     }
@@ -52,7 +52,36 @@ abstract class Controller
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
         {
-            http_response_code(405);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+            die();
+        }
+    }
+
+    protected function checkCSRFToken(): void
+    {
+        $token = htmlspecialchars($_POST['token']??null);
+
+        if (!$token || $token !== $_SESSION['token']) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+            die();
+        }
+    }
+
+    protected function checkAuthorization(): void
+    {
+        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
+        {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Authorization required');
+            die();
+        }
+    }
+
+    protected function checkAuthorizationRedirectLogin(): void
+    {
+        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
+        {
+            $location = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/login?redirect=" . $_SERVER["REQUEST_URI"] . (!empty($_SERVER['QUERY_STRING']) ? "&" . $_SERVER['QUERY_STRING'] : "");
+            header('Location: ' . $location);
             die();
         }
     }

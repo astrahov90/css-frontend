@@ -23,10 +23,10 @@ function getAuthorsListPromise(offset=0) {
         });
 }
 
-function getPostSetRatePromise(postId, likeStatus) {
+function getPostSetRatePromise(postId, likeStatus, token) {
     let querystring = "/posts/"+postId+"/"+(likeStatus?"like":"dislike");
 
-    return $.post(querystring,{}).catch(
+    return $.post(querystring,{token}).catch(
         reason=>{console.log(reason.response.data??reason.responseText);
         });
 }
