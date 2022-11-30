@@ -1,6 +1,8 @@
 <?php
 
 namespace controllers;
+use core\RedisCache;
+
 class Controller_Authors extends \core\Controller
 {
     function action_getAuthor()
@@ -11,11 +13,17 @@ class Controller_Authors extends \core\Controller
 
         if ($authorId == null)
         {
-            http_response_code(400);
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
             die();
         }
 
-        $result = $this->model->get($authorId);
+        $redisKey = 'authors-get-'.$authorId;
+        $callback = function () use ($authorId){
+            return $this->model->get($authorId);
+        };
+
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
+
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));
     }
@@ -28,13 +36,18 @@ class Controller_Authors extends \core\Controller
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'authors.html'), $data);
     }
 
-    function action_getUsers()
+    function action_getAuthors()
     {
         $this->checkMethodGet();
 
         $offset = $_REQUEST['offset']??0;
 
-        $result = $this->model->getList(compact(['offset']));
+        $redisKey = 'authors-getList-'.$offset;
+        $callback = function () use ($offset){
+            return $this->model->getList(compact(['offset']));
+        };
+
+        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));

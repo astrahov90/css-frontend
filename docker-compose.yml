@@ -5,9 +5,16 @@ services:
   frontend:
     build: .
     ports:
-      - 20080:80
+      - '20080:80'
     #volumes:
       # Re-use local composer cache via host-volume
       #- ~/.composer-docker/cache:/root/.composer/cache:delegated
       # Mount source-code for development
       #- ./:/var/www/html
+    depends_on:
+      - redis-server
+
+  redis-server:
+    image: redis:latest
+    ports:
+      - '6379:6379'

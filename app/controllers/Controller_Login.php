@@ -2,6 +2,8 @@
 
 namespace controllers;
 
+use core\RedisCache;
+
 class Controller_Login extends \core\Controller
 {
     function action_index()
@@ -32,10 +34,15 @@ class Controller_Login extends \core\Controller
                 } else {
                     $data = [];
                     $data['error'] = "Имя или пароль неверные.";
+
+                    $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+                    $this->twig->addGlobal('session', $_SESSION);
                     echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'), $data);
                 }
             }
         } else {
+            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'));
         }
 
@@ -88,6 +95,8 @@ class Controller_Login extends \core\Controller
                     die();
                 }
 
+                RedisCache::clearCache('*authors-getList*');
+
                 $newUser = $this->model->get($_REQUEST['username']);
 
                 $_SESSION["isAuthorized"] = true;
@@ -99,6 +108,8 @@ class Controller_Login extends \core\Controller
                 header('Location: ' . $url);
             }
         } else {
+            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'));
         }
 

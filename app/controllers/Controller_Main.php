@@ -10,6 +10,8 @@ class Controller_Main extends \core\Controller
 
         if (isset($_REQUEST["newPost"])) {
             $data['newPost'] = true;
+            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'new-post.html'), $data);
         } else {
             if (isset($_REQUEST["newest"]))
@@ -17,6 +19,8 @@ class Controller_Main extends \core\Controller
             else
                 $data['best'] = true;
 
+            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'posts.html'), $data);
         }
 
