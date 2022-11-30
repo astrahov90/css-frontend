@@ -60,15 +60,14 @@ class Controller_Posts extends \core\Controller
 
         $_SESSION['token'] = md5(uniqid(mt_rand(), true));
         $this->twig->addGlobal('session', $_SESSION);
-
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
     }
 
     function action_addPost()
     {
         $this->checkMethodPost();
-        $this->checkCSRFToken();
         $this->checkAuthorization();
+        $this->checkCSRFToken();
 
         $title = $_REQUEST["title"];
         $body = $_REQUEST["body"];
@@ -87,8 +86,8 @@ class Controller_Posts extends \core\Controller
     function action_like($postId)
     {
         $this->checkMethodPost();
-        $this->checkCSRFToken();
         $this->checkAuthorization();
+        $this->checkCSRFToken();
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, true);
@@ -97,8 +96,8 @@ class Controller_Posts extends \core\Controller
     function action_dislike($postId)
     {
         $this->checkMethodPost();
-        $this->checkCSRFToken();
         $this->checkAuthorization();
+        $this->checkCSRFToken();
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, false);
@@ -118,7 +117,7 @@ class Controller_Posts extends \core\Controller
             $this->model->addPostLike($authorId, $postId, $like);
         }
 
-        RedisCache::clearCache('*posts-getRating-*');
+        RedisCache::clearCache('*posts-*');
 
         header('Content-Type: application/json; charset=utf-8');
         die(json_encode($result));

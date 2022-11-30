@@ -32,7 +32,6 @@ class Controller_Profile extends \core\Controller
 
         $_SESSION['token'] = md5(uniqid(mt_rand(), true));
         $this->twig->addGlobal('session', $_SESSION);
-
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'profile.html'), $data);
     }
 

@@ -32,9 +32,9 @@ class Controller_Comments extends \core\Controller
 
     function action_addCommentToPost()
     {
+        $this->checkMethodPost();
         $this->checkAuthorization();
         $this->checkCSRFToken();
-        $this->checkMethodPost();
 
         $postId = $_REQUEST["postId"];
         $body = $_REQUEST["body"];

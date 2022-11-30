@@ -14,9 +14,11 @@ class ControllerFactory implements IControllerFactory
         {
             $loader = new \Twig\Loader\FilesystemLoader(str_replace('\\', DIRECTORY_SEPARATOR,__DIR__.'/../views/'));
             $twig = new \Twig\Environment($loader, [
-                'cache' => str_replace('\\', DIRECTORY_SEPARATOR,__DIR__.'/../views/cache'),
+                /*'cache' => str_replace('\\', DIRECTORY_SEPARATOR,__DIR__.'/../views/cache'),*/
                 'debug' => true,
             ]);
+
+            $twig->addGlobal('session', $_SESSION);
 
             $controller = new (self::CONTROLLER_PREFIX.$className)($twig);
             $controller->setModel($className);

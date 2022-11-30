@@ -37,14 +37,12 @@ class Controller_Login extends \core\Controller
 
                     $_SESSION['token'] = md5(uniqid(mt_rand(), true));
                     $this->twig->addGlobal('session', $_SESSION);
-
                     echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'), $data);
                 }
             }
         } else {
             $_SESSION['token'] = md5(uniqid(mt_rand(), true));
             $this->twig->addGlobal('session', $_SESSION);
-
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'));
         }
 
@@ -112,7 +110,6 @@ class Controller_Login extends \core\Controller
         } else {
             $_SESSION['token'] = md5(uniqid(mt_rand(), true));
             $this->twig->addGlobal('session', $_SESSION);
-
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'));
         }
 

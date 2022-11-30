@@ -60,6 +60,8 @@ abstract class Controller
         $token = htmlspecialchars($_POST['token']??null);
 
         if (!$token || $token !== $_SESSION['token']) {
+            var_dump($token);
+            var_dump($_SESSION['token']);
             header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
             die();
         }
