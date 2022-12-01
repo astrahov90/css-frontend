@@ -3,7 +3,7 @@
 namespace tests;
 
 /**
- * @testdox Testing of posts controller
+ * @testdox Testing of main controller
  */
 class Controller_MainTest extends ControllerFixtures
 {

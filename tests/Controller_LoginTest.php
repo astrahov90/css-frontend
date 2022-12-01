@@ -6,7 +6,7 @@ use core\ControllerFactory;
 use stdClass;
 
 /**
- * @testdox Testing of posts controller
+ * @testdox Testing of login controller
  */
 class Controller_LoginTest extends ModelFixtures
 {
