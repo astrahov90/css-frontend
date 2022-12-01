@@ -30,14 +30,7 @@ class Controller_Login extends \core\Controller
                             $location .= '?' . join('&', $queryArr);
                         }
                     }
-                    try // for test duties, bad idea(
-                    {
-                        header('Location: ' . $location);
-                    }
-                    catch (\Exception)
-                    {
-
-                    }
+                    header('Location: ' . $location);
                 } else {
                     $data = [];
                     $data['error'] = "Имя или пароль неверные.";
@@ -63,14 +56,7 @@ class Controller_Login extends \core\Controller
 
         $this->clearAuthorization();
 
-        try // for test duties, bad idea(
-        {
-            header('Location: /');
-        }
-        catch (\Exception)
-        {
-
-        }
+        header('Location: /');
     }
 
     function action_register()

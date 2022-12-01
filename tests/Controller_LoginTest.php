@@ -42,7 +42,7 @@ class Controller_LoginTest extends ModelFixtures
     }
 
     /**
-     * @testdox Get list method test
+     * @runInSeparateProcess
      */
     public function testLogin(): void
     {
@@ -64,6 +64,9 @@ class Controller_LoginTest extends ModelFixtures
         $this->assertEquals($username, $_SESSION['userName']);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testLogout(): void
     {
         $this->setPostMethod();
