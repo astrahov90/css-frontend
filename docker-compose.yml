@@ -2,10 +2,23 @@ version: '3.2'
 
 services:
 
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: 12345678
+
+  redis-server:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+
   frontend:
     build: .
+    container_name: pure-css-frontend
     ports:
-      - '20080:80'
+       - '20080:80'
     #volumes:
       # Re-use local composer cache via host-volume
       #- ~/.composer-docker/cache:/root/.composer/cache:delegated
@@ -13,8 +26,4 @@ services:
       #- ./:/var/www/html
     depends_on:
       - redis-server
-
-  redis-server:
-    image: redis:latest
-    ports:
-      - '6379:6379'
+      - postgres

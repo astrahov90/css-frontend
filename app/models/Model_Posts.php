@@ -11,18 +11,18 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
 {
     use GetListTrait;
 
-    const QUERY_BASE = "SELECT
-        posts.id, posts.title, posts.body, posts.created_at, user.id as authorId, user.username as authorName,
-        user.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count,
+    const QUERY_BASE = 'SELECT
+        posts.id, posts.title, posts.body, posts.created_at, users.id as "authorId", users.username as "authorName",
+        users.iconpath as "iconPath", IFNULL(posts_likes.likes_count,0) as likes_count,
         IFNULL(comments.comments_count,0) as comments_count
         FROM posts
         LEFT JOIN (SELECT post_id, SUM(rating) as likes_count FROM posts_likes GROUP BY post_id) as posts_likes
             ON posts.id=posts_likes.post_id
         LEFT JOIN (SELECT post_id, COUNT(id) as comments_count FROM comments GROUP BY post_id) as comments
             ON posts.id=comments.post_id
-        INNER JOIN user ON posts.author_id=user.id WHERE TRUE
+        INNER JOIN users ON posts.author_id=users.id WHERE TRUE
         ORDER BY :order
-        LIMIT 5 OFFSET :offset";
+        LIMIT 5 OFFSET :offset';
 
     public function postWork($elem)
     {
@@ -83,7 +83,7 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
         $params["offset"] = 0;
         $params["postId"] = $postId;
 
-        $queryString = str_replace(":order", "TRUE", self::QUERY_BASE);
+        $queryString = str_replace(":order", "posts.id", self::QUERY_BASE);
         $queryString = str_replace("WHERE TRUE", "WHERE posts.id=:postId", $queryString);
 
         $result = $this->getOne($queryString, $params);

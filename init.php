@@ -21,6 +21,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
     Available commands:
 
     prepareSQLite - create SQLite db if not exists
+    prepareTables - create tables if not exists
     prepareSampleData - fill db with starting samples of users, posts, comments
 
     Using:
@@ -33,7 +34,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
 } else if ($argv[1]=='prepareSQLite'){
     include ('app'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'config.php');
 
-    $path = \core\Config::get_db_host();
+    $path = \core\Config::getDBHost();
     if (file_exists($path))
     {
         print_r("SQL already prepared" . PHP_EOL);
@@ -44,140 +45,129 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
         $fileDB = fopen($path,'wb+');
         fclose($fileDB);
 
-        $pdo = new \PDO("sqlite:" . $path);
-
-        print_r('CREATING SQL TABLES' . PHP_EOL);
-
-        $queryStringArray = getCreateQueryArray();
-
-        foreach ($queryStringArray as $key => $value)
-        {
-            $query = $pdo->prepare($value);
-            if (!$query->execute())
-            {
-                print_r($key.' table create error' . PHP_EOL);
-                unlink($path);
-                return;
-            }
-            else
-            {
-                print_r($key.' table created successfully' . PHP_EOL);
-            }
-        }
-
-        print_r('Tables prepared successfully' . PHP_EOL);
+        print_r('SQLITE DB CREATED' . PHP_EOL);
     }
+} else if ($argv[1]=='prepareTables'){
+    include ('app'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'config.php');
+
+    $pdo = \core\ModelFactory::getDBH($_ENV['DB_TYPE']??'sqlite');
+
+    print_r('CREATING SQL TABLES' . PHP_EOL);
+
+    $queryStringArray = getCreateQueryArray();
+
+    $pdo->beginTransaction();
+    foreach ($queryStringArray as $key => $value)
+    {
+        $query = $pdo->exec($value);
+    }
+    $pdo->commit();
+
+    print_r('SQL TABLES CREATED SUCCESSFULLY' . PHP_EOL);
+
 } else if ($argv[1]=='prepareSampleData'){
     include ('app'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'config.php');
 
-    $path = \core\Config::get_db_host();
-    if (!file_exists($path) || !filesize($path))
+    $pdo = \core\ModelFactory::getDBH($_ENV['DB_TYPE']??'sqlite');
+
+    $usersArray = [];
+    $postsArray = [];
+
+    print_r('Samples creation starts' . PHP_EOL);
+
+    $admin = [];
+    $admin['username'] = 'admin';
+    $admin['password_hash'] = password_hash('12345678',PASSWORD_DEFAULT);
+    $admin['email'] = 'admin@sai-testlab.ddns.net';
+    $admin['created_at'] = $admin['updated_at'] = time();
+    $admin['iconPath'] = getAvatarData($admin['username']);
+    $admin['description'] = 'Это администратор';
+
+    $result = addUser($pdo, $admin);
+
+    if (!$result)
     {
-        print_r("SQL is not prepared" . PHP_EOL);
+        print_r('Admin user insert error' . PHP_EOL);
         return;
     }
-    else
+
+    print_r('Admin user with password 12345678 inserted successfully' . PHP_EOL);
+
+    $userArray = getRandomUserData();
+
+    foreach ($userArray as $value)
     {
-        $usersArray = [];
-        $postsArray = [];
+        $userData = [];
+        $userData['username'] = $value->Login;
+        $userData['password_hash'] = password_hash($value->Password,PASSWORD_DEFAULT);
+        $userData['email'] = $value->Email;
+        $userData['iconPath'] = getAvatarData($userData['username']);
+        $userData['description'] = $value->FirstName.' '.$value->LastName;
 
-        $pdo = new \PDO("sqlite:" . $path);
-
-        print_r('Samples creation starts' . PHP_EOL);
-
-        $admin = [];
-        $admin['username'] = 'admin';
-        $admin['password_hash'] = password_hash('12345678',PASSWORD_DEFAULT);
-        $admin['email'] = 'admin@sai-testlab.ddns.net';
-        $admin['created_at'] = $admin['updated_at'] = time();
-        $admin['iconPath'] = getAvatarData($admin['username']);
-        $admin['description'] = 'Это администратор';
-
-        $result = addUser($pdo, $admin);
+        $result = addUser($pdo, $userData);
 
         if (!$result)
         {
-            print_r('Admin user insert error' . PHP_EOL);
+            print_r('User insert error' . PHP_EOL);
             return;
         }
 
-        print_r('Admin user with password 12345678 inserted successfully' . PHP_EOL);
-
-        $userArray = getRandomUserData();
-
-        foreach ($userArray as $value)
-        {
-            $userData = [];
-            $userData['username'] = $value->Login;
-            $userData['password_hash'] = password_hash($value->Password,PASSWORD_DEFAULT);
-            $userData['email'] = $value->Email;
-            $userData['iconPath'] = getAvatarData($userData['username']);
-            $userData['description'] = $value->FirstName.' '.$value->LastName;
-
-            $result = addUser($pdo, $userData);
-
-            if (!$result)
-            {
-                print_r('User insert error' . PHP_EOL);
-                return;
-            }
-
-            print_r('User '.$value->Login.' with password '.$value->Password.' inserted successfully' . PHP_EOL);
-            $usersArray[] = $pdo->lastInsertId();
-        }
-
-        for ($i=0;$i<10;$i++)
-        {
-            if ($i/5.0 == floor($i/5))
-            {
-                sleep(1);
-            }
-
-            $author_id = rand(min($usersArray),max($usersArray));
-
-            $postData = [];
-            $postData['author_id'] = $author_id;
-            $postData['title'] = getRandomPostTitle();
-            $postData['body'] = getRandomPostText();
-
-            $result = addPost($pdo, $postData);
-
-            if (!$result)
-            {
-                print_r('Post insert error' . PHP_EOL);
-                return;
-            }
-            print_r('Post inserted successfully' . PHP_EOL);
-            $postsArray[] = $pdo->lastInsertId();
-        }
-
-        for ($i=0;$i<50;$i++)
-        {
-            if ($i/10.0 == floor($i/10))
-            {
-                sleep(1);
-            }
-
-            $author_id = rand(min($usersArray),max($usersArray));
-            $post_id = rand(min($postsArray),max($postsArray));
-
-            $commentData = [];
-            $commentData['author_id'] = $author_id;
-            $commentData['post_id'] = $post_id;
-            $commentData['body'] = getRandomCommentText();
-
-            $result = addComment($pdo, $commentData);
-
-            if (!$result)
-            {
-                print_r('Comment insert error' . PHP_EOL);
-                return;
-            }
-            print_r('Comment inserted successfully' . PHP_EOL);
-        }
-
-        print_r('Samples prepared successfully' . PHP_EOL);
+        print_r('User '.$value->Login.' with password '.$value->Password.' inserted successfully' . PHP_EOL);
+        $usersArray[] = $pdo->lastInsertId();
     }
+
+    for ($i=0;$i<10;$i++)
+    {
+        if ($i/5.0 == floor($i/5))
+        {
+            sleep(1);
+        }
+
+        $author_id = rand(min($usersArray),max($usersArray));
+
+        $postData = [];
+        $postData['author_id'] = $author_id;
+        $postData['title'] = getRandomPostTitle();
+        $postData['body'] = getRandomPostText();
+
+        $result = addPost($pdo, $postData);
+
+        if (!$result)
+        {
+            print_r('Post insert error' . PHP_EOL);
+            return;
+        }
+        print_r('Post inserted successfully' . PHP_EOL);
+        $postsArray[] = $pdo->lastInsertId();
+    }
+
+    for ($i=0;$i<50;$i++)
+    {
+        if ($i/10.0 == floor($i/10))
+        {
+            sleep(1);
+        }
+
+        $author_id = rand(min($usersArray),max($usersArray));
+        $post_id = rand(min($postsArray),max($postsArray));
+
+        $commentData = [];
+        $commentData['author_id'] = $author_id;
+        $commentData['post_id'] = $post_id;
+        $commentData['body'] = getRandomCommentText();
+
+        $result = addComment($pdo, $commentData);
+
+        if (!$result)
+        {
+            print_r('Comment insert error' . PHP_EOL);
+            return;
+        }
+        print_r('Comment inserted successfully' . PHP_EOL);
+    }
+
+    print_r('Samples prepared successfully' . PHP_EOL);
+
 } else {
     print_r('Wrong command');
 }
@@ -185,11 +175,11 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
 function getCreateQueryArray():iterable {
     $queryStringArray = [];
     $queryStringArray['USERS'] = '-- auto-generated definition
-        CREATE TABLE IF NOT EXISTS user
+        CREATE TABLE IF NOT EXISTS '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'users
         (
-          id                   integer      not null
-            primary key
-                                            autoincrement,
+          id                   '.($_ENV['DB_TYPE']==='postgres'?'SERIAL':'INTEGER').'      not null
+            primary key '.($_ENV['DB_TYPE']!=='postgres'?'autoincrement':'').'
+                                            ,
           username             varchar(255) not null
             unique,
           auth_key             varchar(32)  not null,
@@ -209,13 +199,13 @@ function getCreateQueryArray():iterable {
 ';
 
     $queryStringArray['POSTS'] = '-- auto-generated definition
-        CREATE TABLE IF NOT EXISTS posts
+        CREATE TABLE IF NOT EXISTS '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'posts
         (
-          id         integer not null
-            primary key
-          autoincrement,
+          id         '.($_ENV['DB_TYPE']==='postgres'?'SERIAL':'INTEGER').' not null
+            primary key '.($_ENV['DB_TYPE']!=='postgres'?'autoincrement':'').'
+          ,
           author_id  INTEGER not null
-            references user
+            references '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'users
               on delete cascade,
           title      varchar(255),
           body       text,
@@ -226,16 +216,16 @@ function getCreateQueryArray():iterable {
           on posts (author_id);';
 
     $queryStringArray['COMMENTS'] = '-- auto-generated definition
-        CREATE TABLE IF NOT EXISTS comments
+        CREATE TABLE IF NOT EXISTS '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'comments
         (
-          id         integer not null
-            primary key
-          autoincrement,
+          id         '.($_ENV['DB_TYPE']==='postgres'?'SERIAL':'INTEGER').' not null
+            primary key '.($_ENV['DB_TYPE']!=='postgres'?'autoincrement':'').'
+          ,
           author_id  INTEGER not null
-            references user
+            references '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'users
               on delete cascade,
           post_id    INTEGER not null
-            references posts
+            references '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'posts
               on delete cascade,
           body       text,
           created_at integer
@@ -248,16 +238,16 @@ function getCreateQueryArray():iterable {
           on comments (post_id);';
 
     $queryStringArray['POSTS_LIKES'] = '-- auto-generated definition
-        CREATE TABLE IF NOT EXISTS posts_likes
+        CREATE TABLE IF NOT EXISTS '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'posts_likes
         (
-          id        integer not null
-            primary key
-          autoincrement,
+          id        '.($_ENV['DB_TYPE']==='postgres'?'SERIAL':'INTEGER').' not null
+            primary key '.($_ENV['DB_TYPE']!=='postgres'?'autoincrement':'').'
+          ,
           author_id INTEGER not null
-            references user
+            references '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'users
               on delete cascade,
           post_id   INTEGER not null
-            references posts
+            references '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'posts
               on delete cascade,
           rating    integer
         );
@@ -358,12 +348,12 @@ function getRandomCommentText()
 
 function addUser(\PDO $pdo, array $userData)
 {
-    $queryString = "-- auto-generated definition
-                INSERT INTO user 
+    $queryString = '-- auto-generated definition
+                INSERT INTO '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'users
                 (username, auth_key, password_hash, password_reset_token, email,
                  status, created_at, updated_at, verification_token, iconPath, description) 
                 VALUES (:username, :auth_key, :password_hash, :password_reset_token, :email,
-                 :status, :created_at, :updated_at, :verification_token, :iconPath, :description);";
+                 :status, :created_at, :updated_at, :verification_token, :iconPath, :description);';
 
     $query = $pdo->prepare($queryString);
     $query->bindParam('username', $userData['username']);
@@ -383,10 +373,10 @@ function addUser(\PDO $pdo, array $userData)
 
 function addPost(\PDO $pdo, array $postData)
 {
-    $queryString = "-- auto-generated definition
-                INSERT INTO posts 
+    $queryString = '-- auto-generated definition
+                INSERT INTO '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'posts
                 (author_id, title, body, created_at) 
-                VALUES (:author_id, :title, :body, :created_at);";
+                VALUES (:author_id, :title, :body, :created_at);';
 
     $query = $pdo->prepare($queryString);
     $query->bindParam('author_id', $postData['author_id']);
@@ -398,10 +388,10 @@ function addPost(\PDO $pdo, array $postData)
 
 function addComment(\PDO $pdo, array $commentData)
 {
-    $queryString = "-- auto-generated definition
-                INSERT INTO comments 
+    $queryString = '-- auto-generated definition
+                INSERT INTO '.($_ENV['DB_TYPE']==='postgres'?'public.':'').'comments
                 (author_id, post_id, body, created_at) 
-                VALUES (:author_id, :post_id, :body, :created_at);";
+                VALUES (:author_id, :post_id, :body, :created_at);';
 
     $query = $pdo->prepare($queryString);
     $query->bindParam('author_id', $commentData['author_id']);
