@@ -5,6 +5,7 @@ namespace core;
 use core\interfaces\IModelFactory;
 use db\DBHandler;
 use db\MockConnection;
+use db\PostgresqlConnection;
 use db\SQLiteConnection;
 
 class ModelFactory implements IModelFactory
@@ -29,6 +30,9 @@ class ModelFactory implements IModelFactory
                 break;
             case 'mock':
                 $connectionClass = new MockConnection();
+                break;
+            case 'postgres':
+                $connectionClass = new PostgresqlConnection();
                 break;
             default:
                 throw new \Exception('DB wrong type');

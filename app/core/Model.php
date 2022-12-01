@@ -34,6 +34,11 @@ abstract class Model implements IModelDB
 
     public function getValue($queryString, $params=[])
     {
+        if ($_ENV['DB_TYPE']==='postgres')
+        {
+            $queryString = str_replace("IFNULL","COALESCE", $queryString);
+        }
+
         $query = $this->dbh->prepare($queryString);
         $query->execute($params);
         $result = $query->fetchColumn();
@@ -43,6 +48,11 @@ abstract class Model implements IModelDB
 
     public function getAll($queryString, $params=[])
     {
+        if ($_ENV['DB_TYPE']==='postgres')
+        {
+            $queryString = str_replace("IFNULL","COALESCE", $queryString);
+        }
+
         $query = $this->dbh->prepare($queryString);
         $query->execute($params);
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -52,6 +62,11 @@ abstract class Model implements IModelDB
 
     public function getOne($queryString, $params)
     {
+        if ($_ENV['DB_TYPE']==='postgres')
+        {
+            $queryString = str_replace("IFNULL","COALESCE", $queryString);
+        }
+
         $query = $this->dbh->prepare($queryString);
         $query->execute($params);
         $result = $query->fetch(\PDO::FETCH_ASSOC);

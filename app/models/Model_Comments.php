@@ -11,12 +11,13 @@ class Model_Comments extends \core\Model implements IModelCreate, IModelPostWork
 
     use GetListTrait;
 
-    const QUERY_BASE = "SELECT
-        comments.id, comments.post_id, comments.body, comments.created_at, user.id as authorId, user.username as authorName, user.iconPath
+    const QUERY_BASE = 'SELECT
+        comments.id, comments.post_id, comments.body, comments.created_at, users.id as "authorId",
+        users.username as "authorName", users.iconpath as "iconPath"
         FROM comments
-        INNER JOIN user ON comments.author_id=user.id WHERE comments.post_id=:postId
+        INNER JOIN users ON comments.author_id=users.id WHERE comments.post_id=:postId
         ORDER BY comments.created_at
-        LIMIT 5 OFFSET :offset";
+        LIMIT 5 OFFSET :offset';
 
     public function postWork($elem)
     {

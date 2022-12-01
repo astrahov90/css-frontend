@@ -10,8 +10,8 @@ class Model_Login extends \core\Model implements IModelCreate, IModelGet
     const STATUS_ACTIVE = 10;
 
     const QUERY_BASE = "SELECT
-        user.id, user.username, user.password_hash
-        FROM user
+        users.id, users.username, users.password_hash
+        FROM users
         WHERE username=:username";
 
     public function get($username)

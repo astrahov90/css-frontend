@@ -10,13 +10,13 @@ class Model_Authors extends \core\Model implements IModelGet, IModelPostWork
 {
     use GetListTrait;
 
-    const QUERY_BASE = "SELECT
-        user.id as authorId, user.username as authorName, user.iconPath, user.created_at, user.description, COUNT(posts.id) as posts_count
-        FROM user
-        LEFT JOIN posts ON user.id=posts.author_id WHERE TRUE
-        GROUP BY user.id, user.username, user.iconPath, user.created_at, user.description
-        ORDER BY user.username
-        LIMIT 5 OFFSET :offset";
+    const QUERY_BASE = 'SELECT
+        users.id as authorId, users.username as "authorName", users.iconpath as "iconPath", users.created_at, users.description, COUNT(posts.id) as posts_count
+        FROM users
+        LEFT JOIN posts ON users.id=posts.author_id WHERE TRUE
+        GROUP BY users.id, users.username, users.iconpath, users.created_at, users.description
+        ORDER BY users.username
+        LIMIT 5 OFFSET :offset';
 
     public function postWork($elem)
     {
@@ -55,7 +55,7 @@ class Model_Authors extends \core\Model implements IModelGet, IModelPostWork
         $params["id"] = $authorId;
         $params["offset"] = 0;
 
-        $queryString = str_replace("WHERE TRUE", "WHERE user.id=:id", self::QUERY_BASE);
+        $queryString = str_replace("WHERE TRUE", "WHERE users.id=:id", self::QUERY_BASE);
 
         $result = $this->getOne($queryString, $params);
 

@@ -7,8 +7,8 @@ use core\interfaces\IModelPostWork;
 
 class Model_Profile extends \core\Model implements IModelGet, IModelPostWork
 {
-    const QUERY_BASE = "SELECT
-        * from user WHERE id=:id";
+    const QUERY_BASE = 'SELECT
+        *, iconpath as "iconPath" from users WHERE users.id=:id';
 
     public function postWork($elem){
         $elem["created_at"] = date("d.m.Y", $elem["created_at"]);
