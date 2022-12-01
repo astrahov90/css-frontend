@@ -2,11 +2,16 @@
 
 namespace core;
 
+use core\traits\AuthorizedTrait;
+use core\traits\CheckCSRFTrait;
+use core\traits\MethodsCheckTrait;
+
 abstract class Controller
 {
-    protected $model;
-    protected $view;
-    protected $twig;
+    protected ?Model $model;
+    protected ?\Twig\Environment $twig;
+
+    use AuthorizedTrait, CheckCSRFTrait, MethodsCheckTrait;
 
     const ACTION_PREFIX = 'action_';
 
@@ -19,70 +24,21 @@ abstract class Controller
     {
     }
 
-    function setModel($class_name)
+    function setModel($class_name, $dbh)
     {
-        $this->model = ModelFactory::build($class_name);
+        $this->model = ModelFactory::build($class_name, $dbh);
     }
 
-    function runAction($action_name, $object_id)
+    function runAction(string $action_name, ?int $object_id = null)
     {
         $fullActionName = self::ACTION_PREFIX.$action_name;
         if (method_exists($this, $fullActionName)) {
             if (isset($object_id))
-                $this->$fullActionName($object_id);
+                return $this->$fullActionName($object_id);
             else
-                $this->$fullActionName();
-        } else {
-            return false;
+                return $this->$fullActionName();
         }
-    }
 
-    protected function checkMethodGet():void
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
-        {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-            die();
-        }
-    }
-
-    protected function checkMethodPost():void
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-        {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-            die();
-        }
-    }
-
-    protected function checkCSRFToken(): void
-    {
-        $token = htmlspecialchars($_POST['token']??null);
-
-        if (!$token || $token !== $_SESSION['token']) {
-            var_dump($token);
-            var_dump($_SESSION['token']);
-            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-            die();
-        }
-    }
-
-    protected function checkAuthorization(): void
-    {
-        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
-        {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Authorization required');
-            die();
-        }
-    }
-
-    protected function checkAuthorizationRedirectLogin(): void
-    {
-        if (!isset($_SESSION['isAuthorized']) || !$_SESSION['isAuthorized'])
-        {
-            $location = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/login?redirect=" . $_SERVER["REQUEST_URI"] . (!empty($_SERVER['QUERY_STRING']) ? "&" . $_SERVER['QUERY_STRING'] : "");
-            header('Location: ' . $location);
-            die();
-        }
+        return false;
     }
 }

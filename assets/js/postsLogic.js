@@ -46,7 +46,7 @@ function renderPostElement(elem,curIndex, avatarField="") {
     return "<div class='row post d-flex'>\n" +
         "                <input type='hidden' class='postId' value='" + elem.id + "'>\n" +
         "                <div class='col-2 d-flex flex-column align-items-stretch'>\n" +
-        "                    <div class='flex-grow-0 align-self-start'>Автор: <a href='/authors/" + elem.author_id + "/posts'>" + elem.authorName + "</a>" + "</div>\n" +
+        "                    <div class='flex-grow-0 align-self-start'>Автор: <a href='/authors/" + elem.authorId + "/posts'>" + elem.authorName + "</a>" + "</div>\n" +
         "                    <div class='flex-grow-1 align-self-start pt-1'>" + avatarField + "</div>\n" +
         "                    <div class='white-spaces-pre'>Дата публикации: \n" + elem.created_at + "</div>\n" +
         "                </div>\n" +
@@ -171,7 +171,7 @@ function ratePost(postId, likeStatus, ratingField, token){
     getPostSetRatePromise(postId, likeStatus, token)
         .then(()=>{
             getPostGetRatePromise(postId).then(result=>{
-                ratingField.html(result);
+                ratingField.html(result.rating);
             })
         });
 

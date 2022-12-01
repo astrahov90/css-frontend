@@ -21,7 +21,7 @@ class ControllerFactory implements IControllerFactory
             $twig->addGlobal('session', $_SESSION);
 
             $controller = new (self::CONTROLLER_PREFIX.$className)($twig);
-            $controller->setModel($className);
+            $controller->setModel($className, ModelFactory::getDBH(Config::getDBType()));
 
             return $controller;
         }

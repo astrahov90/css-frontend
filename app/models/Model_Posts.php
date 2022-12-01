@@ -12,10 +12,14 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
     use GetListTrait;
 
     const QUERY_BASE = "SELECT
-        posts.id, posts.title, posts.body, posts.created_at, user.id as authorId, user.username as authorName, user.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count, IFNULL(comments.comments_count,0) as comments_count
+        posts.id, posts.title, posts.body, posts.created_at, user.id as authorId, user.username as authorName,
+        user.iconPath, IFNULL(posts_likes.likes_count,0) as likes_count,
+        IFNULL(comments.comments_count,0) as comments_count
         FROM posts
-        LEFT JOIN (SELECT post_id, SUM(rating) as likes_count FROM posts_likes GROUP BY post_id) as posts_likes ON posts.id=posts_likes.post_id
-        LEFT JOIN (SELECT post_id, COUNT(id) as comments_count FROM comments GROUP BY post_id) as comments ON posts.id=comments.post_id
+        LEFT JOIN (SELECT post_id, SUM(rating) as likes_count FROM posts_likes GROUP BY post_id) as posts_likes
+            ON posts.id=posts_likes.post_id
+        LEFT JOIN (SELECT post_id, COUNT(id) as comments_count FROM comments GROUP BY post_id) as comments
+            ON posts.id=comments.post_id
         INNER JOIN user ON posts.author_id=user.id WHERE TRUE
         ORDER BY :order
         LIMIT 5 OFFSET :offset";

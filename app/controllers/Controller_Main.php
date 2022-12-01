@@ -8,22 +8,21 @@ class Controller_Main extends \core\Controller
     {
         $data = [];
 
+        $templateName = 'posts.html';
+        $this->setCSRFToken();
+        $this->twig->addGlobal('session', $_SESSION);
+
         if (isset($_REQUEST["newPost"])) {
             $data['newPost'] = true;
-            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
-            $this->twig->addGlobal('session', $_SESSION);
-            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'new-post.html'), $data);
+            $templateName = 'new-post.html';
         } else {
             if (isset($_REQUEST["newest"]))
                 $data['newest'] = true;
             else
                 $data['best'] = true;
-
-            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
-            $this->twig->addGlobal('session', $_SESSION);
-            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'posts.html'), $data);
         }
 
+        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,$templateName), $data);
     }
 
     function action_error()

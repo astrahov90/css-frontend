@@ -13,6 +13,8 @@ class RedisCache implements CacheItemPoolInterface
 
     private Redis $cacheObject;
 
+    private bool $isConnected;
+
     public function __construct($cacheObject)
     {
         $this->cacheObject = $cacheObject;
@@ -24,13 +26,28 @@ class RedisCache implements CacheItemPoolInterface
     public function connect(): void
     {
         $redisHost = Config::getRedisHost();
+
+        if (empty($redisHost))
+        {
+            $this->isConnected = false;
+            return;
+        }
+
         $redisPort = Config::getRedisPort();
 
-        $this->cacheObject->connect($redisHost, $redisPort);
+        try {
+            $this->cacheObject->connect($redisHost, $redisPort);
 
-        if (!empty($redisPassword))
+            if (!empty($redisPassword))
+            {
+                $this->cacheObject->auth($redisPassword);
+            }
+
+            $this->isConnected = true;
+        }
+        catch (\RedisException)
         {
-            $this->cacheObject->auth($redisPassword);
+            $this->isConnected = false;
         }
     }
 

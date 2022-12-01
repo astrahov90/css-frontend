@@ -18,9 +18,14 @@ class Router
         if ($controller===null)
             self::ErrorPage404();
 
-        if ($controller->runAction($action_name, $object_id)===false)
+        $response = $controller->runAction($action_name, $object_id);
+        if ($response===false)
             self::ErrorPage404();
 
+        if (json_decode($response)!==null)
+            header('Content-Type: application/json; charset=utf-8');
+
+        echo $response;
     }
 
     static function ErrorPage404()

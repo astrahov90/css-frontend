@@ -30,7 +30,7 @@ class Controller_Profile extends \core\Controller
         $data = [];
         $data['author'] = $this->model->get($_SESSION['userId']);
 
-        $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+        $this->setCSRFToken();
         $this->twig->addGlobal('session', $_SESSION);
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'profile.html'), $data);
     }

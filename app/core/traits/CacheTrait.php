@@ -7,7 +7,7 @@ use Psr\Cache\InvalidArgumentException;
 
 trait CacheTrait
 {
-    private static CacheItemPoolInterface $cachePool;
+    private static ?CacheItemPoolInterface $cachePool = null;
 
     /**
      * @param CacheItemPoolInterface $cachePool
@@ -19,9 +19,9 @@ trait CacheTrait
     }
 
     /**
-     * @return CacheItemPoolInterface
+     * @return ?CacheItemPoolInterface
      */
-    public static function getInstance():CacheItemPoolInterface
+    public static function getInstance():?CacheItemPoolInterface
     {
         return static::$cachePool;
     }
@@ -37,17 +37,22 @@ trait CacheTrait
     {
         $redisCache = static::getInstance();
 
-        $cacheItem = $redisCache->getItem($redisKey);
-        $result = json_decode($cacheItem->get());
-        if (!$result)
+        if ($redisCache && $redisCache->isConnected)
         {
-            $result = $modelRequest();
+            $cacheItem = $redisCache->getItem($redisKey);
+            $result = json_decode($cacheItem->get());
+            if (!$result)
+            {
+                $result = $modelRequest();
 
-            $cacheItem->set(json_encode($result));
-            if ($expiresAfter)
-                $cacheItem->expiresAfter($expiresAfter);
-            $redisCache->save($cacheItem);
+                $cacheItem->set(json_encode($result));
+                if ($expiresAfter)
+                    $cacheItem->expiresAfter($expiresAfter);
+                $redisCache->save($cacheItem);
+            }
         }
+        else
+            $result = $modelRequest();
 
         return $result;
     }
@@ -55,9 +60,13 @@ trait CacheTrait
     public static function clearCache(?string $pattern='*'):void
     {
         $redisCache = static::getInstance();
-        $keysFounded = $redisCache->scanItems($pattern);
-        if ($keysFounded)
-            $redisCache->deleteItems($keysFounded);
+
+        if ($redisCache && $redisCache->isConnected)
+        {
+            $keysFounded = $redisCache->scanItems($pattern);
+            if ($keysFounded)
+                $redisCache->deleteItems($keysFounded);
+        }
     }
 
 }

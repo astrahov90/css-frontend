@@ -16,6 +16,10 @@ a, a:visited, a:hover, a:active {
     color: inherit;
 }
 
+body{
+    height: 100vh;
+}
+
 header {
     height: 40px;
     padding: 0 18%;
@@ -38,7 +42,7 @@ li.active{
 
 footer {
     color: darkgrey;
-    height: 40px;
+    min-height: 40px;
     padding: 0 18%;
 }
 
@@ -330,7 +334,6 @@ button.asText {
  }
 
  .section-body{
-     min-height: 90vh;
      padding: 0 14%;
      background-clip: content-box;
  }

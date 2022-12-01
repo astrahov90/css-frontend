@@ -11,12 +11,13 @@
     <link rel="icon" href="/assets/img/logo.svg">
     <link rel="stylesheet" href="/assets/css/main.css">
 </head>
-<body>
+<body class="d-flex flex-column">
     {{ include('layout/header.html') }}
 
-    {% block content %}
-    {% endblock %}
-
+    <section class="section-body bg-light section-middle flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </section>
     {{ include('layout/footer.html') }}
 </body>
 </html>

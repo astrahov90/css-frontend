@@ -21,20 +21,19 @@ class Controller_Posts extends \core\Controller
 
         $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
+        return json_encode($result);
     }
 
-    function action_getPost()
+    function action_getPost(): ?string
     {
         $this->checkMethodGet();
 
         $postId = $_REQUEST["postId"]??null;
 
-        if ($postId == null)
+        if ($postId === null)
         {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
-            die();
+            return null;
         }
 
         $redisKey = 'posts-get-'.$postId;
@@ -44,13 +43,12 @@ class Controller_Posts extends \core\Controller
 
         $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
 
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
+        return json_encode($result);
     }
 
     function action_index($model_id = null)
     {
-        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'posts.html'));
+
     }
 
     function action_comments($postId)
@@ -58,7 +56,7 @@ class Controller_Posts extends \core\Controller
         $data = [];
         $data["post"] = $this->model->get($postId);
 
-        $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+        $this->setCSRFToken();
         $this->twig->addGlobal('session', $_SESSION);
         echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
     }
@@ -69,8 +67,8 @@ class Controller_Posts extends \core\Controller
         $this->checkAuthorization();
         $this->checkCSRFToken();
 
-        $title = $_REQUEST["title"];
-        $body = $_REQUEST["body"];
+        $title = $_POST["title"];
+        $body = $_POST["body"];
         $authorId = $_SESSION["userId"];
 
         $postId = $this->model->create(compact(['title','body','authorId']));
@@ -79,11 +77,10 @@ class Controller_Posts extends \core\Controller
 
         RedisCache::clearCache('*posts-getList-*');
 
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
+        return json_encode($result);
     }
 
-    function action_like($postId)
+    function action_like($postId): void
     {
         $this->checkMethodPost();
         $this->checkAuthorization();
@@ -93,7 +90,7 @@ class Controller_Posts extends \core\Controller
         $this->postSetRating($author, $postId, true);
     }
 
-    function action_dislike($postId)
+    function action_dislike($postId): void
     {
         $this->checkMethodPost();
         $this->checkAuthorization();
@@ -101,26 +98,23 @@ class Controller_Posts extends \core\Controller
 
         $author = $_SESSION["userId"];
         $this->postSetRating($author, $postId, false);
-
     }
 
-    private function postSetRating($authorId, $postId, $like)
+    private function postSetRating($authorId, $postId, $like): void
     {
         $ratingSet = $this->model->checkPostRating($authorId, $postId);
 
-        $result = [];
         if ($ratingSet) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
-            die("Оценка уже выставлена");
+            echo "Оценка уже выставлена";
+
+            return;
         }
         else {
             $this->model->addPostLike($authorId, $postId, $like);
         }
 
         RedisCache::clearCache('*posts-*');
-
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
     }
 
     function action_rating($postId)
@@ -132,9 +126,8 @@ class Controller_Posts extends \core\Controller
             return $this->model->getPostRating($postId);
         };
 
-        $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600);
+        $result = ['rating' => RedisCache::getCacheOrDoRequest($redisKey, $callback, 3600)?:0];
 
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
+        return json_encode($result);
     }
 }
