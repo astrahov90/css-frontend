@@ -10,12 +10,12 @@ class Controller_Login extends \core\Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->checkCSRFToken();
-            if (isset($_REQUEST["username"]) && isset($_REQUEST["password"])) {
-                $userData = $this->model->get($_REQUEST["username"]);
-                if (password_verify($_REQUEST["password"], $userData['password_hash'])) {
-                    $_SESSION["isAuthorized"] = true;
-                    $_SESSION["userId"] = $userData["id"];
-                    $_SESSION["userName"] = $userData["username"];
+            if (isset($_POST["username"]) && isset($_POST["password"])) {
+                $userData = $this->model->get($_POST["username"]);
+
+
+                if (password_verify($_POST["password"], $userData['password_hash'])) {
+                    $this->setAuthorization($userData);
 
                     $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 
@@ -30,18 +30,25 @@ class Controller_Login extends \core\Controller
                             $location .= '?' . join('&', $queryArr);
                         }
                     }
-                    header('Location: ' . $location);
+                    try // for test duties, bad idea(
+                    {
+                        header('Location: ' . $location);
+                    }
+                    catch (\Exception)
+                    {
+
+                    }
                 } else {
                     $data = [];
                     $data['error'] = "Имя или пароль неверные.";
 
-                    $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+                    $this->setCSRFToken();
                     $this->twig->addGlobal('session', $_SESSION);
                     echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'), $data);
                 }
             }
         } else {
-            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->setCSRFToken();
             $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'));
         }
@@ -53,9 +60,17 @@ class Controller_Login extends \core\Controller
         $this->checkAuthorization();
         $this->checkMethodPost();
         $this->checkCSRFToken();
-        session_destroy();
 
-        header('Location: /');
+        $this->clearAuthorization();
+
+        try // for test duties, bad idea(
+        {
+            header('Location: /');
+        }
+        catch (\Exception)
+        {
+
+        }
     }
 
     function action_register()
@@ -69,8 +84,9 @@ class Controller_Login extends \core\Controller
                 if ($checkUser !== false) {
                     $data = [];
                     $data['error'] = "Имя уже занято.";
-                    $this->view->generate('app/views/register_view.php', "template_view.php", $data);
-                    die();
+
+                    echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'), $data);
+                    return;
                 }
 
                 $iconPath = null;
@@ -92,23 +108,21 @@ class Controller_Login extends \core\Controller
                 if (!$result)
                 {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
-                    die();
+                    return;
                 }
 
                 RedisCache::clearCache('*authors-getList*');
 
                 $newUser = $this->model->get($_REQUEST['username']);
 
-                $_SESSION["isAuthorized"] = true;
-                $_SESSION["userId"] = $newUser["id"];
-                $_SESSION["userName"] = $newUser["username"];
+                $this->setAuthorization($newUser);
 
                 $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . "/profile/";
 
                 header('Location: ' . $url);
             }
         } else {
-            $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+            $this->setCSRFToken();
             $this->twig->addGlobal('session', $_SESSION);
             echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'));
         }

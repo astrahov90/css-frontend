@@ -37,7 +37,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
     if (file_exists($path))
     {
         print_r("SQL already prepared" . PHP_EOL);
-        die();
+        return;
     }
     else
     {
@@ -57,7 +57,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
             {
                 print_r($key.' table create error' . PHP_EOL);
                 unlink($path);
-                die();
+                return;
             }
             else
             {
@@ -74,7 +74,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
     if (!file_exists($path) || !filesize($path))
     {
         print_r("SQL is not prepared" . PHP_EOL);
-        die();
+        return;
     }
     else
     {
@@ -98,7 +98,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
         if (!$result)
         {
             print_r('Admin user insert error' . PHP_EOL);
-            die();
+            return;
         }
 
         print_r('Admin user with password 12345678 inserted successfully' . PHP_EOL);
@@ -119,7 +119,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
             if (!$result)
             {
                 print_r('User insert error' . PHP_EOL);
-                die();
+                return;
             }
 
             print_r('User '.$value->Login.' with password '.$value->Password.' inserted successfully' . PHP_EOL);
@@ -145,7 +145,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
             if (!$result)
             {
                 print_r('Post insert error' . PHP_EOL);
-                die();
+                return;
             }
             print_r('Post inserted successfully' . PHP_EOL);
             $postsArray[] = $pdo->lastInsertId();
@@ -171,7 +171,7 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
             if (!$result)
             {
                 print_r('Comment insert error' . PHP_EOL);
-                die();
+                return;
             }
             print_r('Comment inserted successfully' . PHP_EOL);
         }
@@ -182,10 +182,10 @@ if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
     print_r('Wrong command');
 }
 
-function getCreateQueryArray() {
+function getCreateQueryArray():iterable {
     $queryStringArray = [];
     $queryStringArray['USERS'] = '-- auto-generated definition
-        create table user
+        CREATE TABLE IF NOT EXISTS user
         (
           id                   integer      not null
             primary key
@@ -209,7 +209,7 @@ function getCreateQueryArray() {
 ';
 
     $queryStringArray['POSTS'] = '-- auto-generated definition
-        create table posts
+        CREATE TABLE IF NOT EXISTS posts
         (
           id         integer not null
             primary key
@@ -226,7 +226,7 @@ function getCreateQueryArray() {
           on posts (author_id);';
 
     $queryStringArray['COMMENTS'] = '-- auto-generated definition
-        create table comments
+        CREATE TABLE IF NOT EXISTS comments
         (
           id         integer not null
             primary key
@@ -248,7 +248,7 @@ function getCreateQueryArray() {
           on comments (post_id);';
 
     $queryStringArray['POSTS_LIKES'] = '-- auto-generated definition
-        create table posts_likes
+        CREATE TABLE IF NOT EXISTS posts_likes
         (
           id        integer not null
             primary key

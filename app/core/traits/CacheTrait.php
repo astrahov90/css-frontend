@@ -7,7 +7,7 @@ use Psr\Cache\InvalidArgumentException;
 
 trait CacheTrait
 {
-    private static CacheItemPoolInterface $cachePool;
+    private static ?CacheItemPoolInterface $cachePool = null;
 
     /**
      * @param CacheItemPoolInterface $cachePool
@@ -19,9 +19,9 @@ trait CacheTrait
     }
 
     /**
-     * @return CacheItemPoolInterface
+     * @return ?CacheItemPoolInterface
      */
-    public static function getInstance():CacheItemPoolInterface
+    public static function getInstance():?CacheItemPoolInterface
     {
         return static::$cachePool;
     }
@@ -37,7 +37,7 @@ trait CacheTrait
     {
         $redisCache = static::getInstance();
 
-        if ($redisCache->isConnected)
+        if ($redisCache && $redisCache->isConnected)
         {
             $cacheItem = $redisCache->getItem($redisKey);
             $result = json_decode($cacheItem->get());
@@ -61,7 +61,7 @@ trait CacheTrait
     {
         $redisCache = static::getInstance();
 
-        if ($redisCache->isConnected)
+        if ($redisCache && $redisCache->isConnected)
         {
             $keysFounded = $redisCache->scanItems($pattern);
             if ($keysFounded)

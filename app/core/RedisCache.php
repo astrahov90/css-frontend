@@ -26,6 +26,13 @@ class RedisCache implements CacheItemPoolInterface
     public function connect(): void
     {
         $redisHost = Config::getRedisHost();
+
+        if (empty($redisHost))
+        {
+            $this->isConnected = false;
+            return;
+        }
+
         $redisPort = Config::getRedisPort();
 
         try {

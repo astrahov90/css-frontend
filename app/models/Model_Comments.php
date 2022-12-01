@@ -66,4 +66,19 @@ class Model_Comments extends \core\Model implements IModelCreate, IModelPostWork
 
         return $recordId;
     }
+
+    public function get($commentId)
+    {
+        $params = [];
+        $params["offset"] = 0;
+        $params["commentId"] = $commentId;
+
+        $queryString = str_replace("WHERE comments.post_id=:postId", "WHERE comments.id=:commentId", self::QUERY_BASE);
+
+        $result = $this->getOne($queryString, $params);
+
+        $result = $this->postWork($result);
+
+        return $result;
+    }
 }

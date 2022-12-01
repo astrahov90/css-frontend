@@ -1,7 +1,11 @@
 {% extends 'template.html' %}
 
 {% block title %}
-Пикомемсы - посты
+    {% if newest %}
+        Пикомемсы - свежее
+    {% else %}
+        Пикомемсы - лучшее
+    {% endif %}
 {% endblock %}
 
 {% block content %}

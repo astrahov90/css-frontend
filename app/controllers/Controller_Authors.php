@@ -14,7 +14,7 @@ class Controller_Authors extends \core\Controller
         if ($authorId == null)
         {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
-            die();
+            return;
         }
 
         $redisKey = 'authors-get-'.$authorId;

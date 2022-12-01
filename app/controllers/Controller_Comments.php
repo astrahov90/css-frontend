@@ -16,7 +16,7 @@ class Controller_Comments extends \core\Controller
         if ($postId == null)
         {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad request');
-            die();
+            return;
         }
 
         $redisKey = 'comments-getList-'.$postId.'-'.$offset;
@@ -26,8 +26,7 @@ class Controller_Comments extends \core\Controller
 
         $result = RedisCache::getCacheOrDoRequest($redisKey, $callback, 60);
 
-        header('Content-Type: application/json; charset=utf-8');
-        die(json_encode($result));
+        return json_encode($result);
     }
 
     function action_addCommentToPost()
@@ -36,15 +35,17 @@ class Controller_Comments extends \core\Controller
         $this->checkAuthorization();
         $this->checkCSRFToken();
 
-        $postId = $_REQUEST["postId"];
-        $body = $_REQUEST["body"];
+        $postId = $_POST["postId"];
+        $body = $_POST["body"];
         $authorId = $_SESSION["userId"];
 
-        $this->model->create(compact(['postId','body','authorId']));
+        $commentId = $this->model->create(compact(['postId','body','authorId']));
+
+        $result = $this->model->get($commentId);
 
         RedisCache::clearCache('*comments-getList-'.$postId.'*');
 
-        die();
+        return json_encode($result);
     }
 
 }
