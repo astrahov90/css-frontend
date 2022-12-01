@@ -6,7 +6,7 @@ use core\ControllerFactory;
 use stdClass;
 
 /**
- * @testdox Testing of posts controller
+ * @testdox Testing of comments controller
  */
 class Controller_CommentsTest extends ModelFixtures
 {
