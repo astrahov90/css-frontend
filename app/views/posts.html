@@ -28,11 +28,11 @@
         });
 
         $(document).ready(function () {
-            loadPostsData(false);
+            loadPostsData(postTemplate,false);
         });
 
         morePostsBtn.click(function () {
-            loadPostsData();
+            loadPostsData(postTemplate);
         });
 
         $('body').on('click','.rating-arrow', function () {
@@ -60,6 +60,42 @@
 
             return false;
         });
+
+        const postTemplate = (curIndex, postData)=>{
+            return `<div class='row post d-flex'>
+                        <input type='hidden' class='postId' value='${postData.id}'>
+                        <div class='col-2 d-flex flex-column align-items-stretch'>
+                            <div class='flex-grow-0 align-self-start'>Автор: <a href='/authors/${postData.authorId}/posts'>${postData.authorName}</a></div>
+                            <div class='flex-grow-1 align-self-start pt-1'><img class='avatar' src='${postData.iconPath}' alt='Аватар автора'></div>
+                            <div class='white-spaces-pre'>Дата публикации: \r\n${postData.created_at}</div>
+                        </div>
+                        <div class='col-9'>
+                            <div class='container'>
+                                <div class='row'>
+                                    <div class='card'>
+                                        <div class='card-title'>
+                                            <div class='container-fluid'>
+                                                <div class='row'>
+                                                    <div class='col-9 fw-bold'>${postData.title}</div>
+                                                    <div class='col-3'> Рейтинг: <img class='rating-arrow rating-down' src='/assets/img/down-arrow-red.svg'><span class='rating-count'>${postData.likes_count}</span><img class='rating-arrow rating-up' src='/assets/img/up-arrow-green.svg'></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type='checkbox' data-more-checker='card-read-more-checker' id='card-read-more-checker-${curIndex}'/>
+                                        <div class='card-body'>
+                                            <p>${bbCodeDecode(postData.body)}</p>
+                                            <div class='card-bottom'>
+                                            </div>
+                                        </div>
+                                            <a href='/posts/${postData.id}/comments/'>${postData.comments_count_text}</a>
+                                        <label for='card-read-more-checker-${curIndex}' class='card-read-more-button'></label>
+                                    </div>
+                                    <div class='clearfix'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+        }
 
     </script>
 {% endblock %}

@@ -560,10 +560,14 @@ a.btn{
 }
 
 .moreComments:hover{
-    text-decoration: underline;
+    font-weight: bold;
     cursor: pointer;
 }
 
+.moreAuthors:hover{
+    font-weight: bold;
+    cursor: pointer;
+}
 
 .row.post .post-left {
     position: relative;

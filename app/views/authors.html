@@ -17,12 +17,42 @@
         moreAuthorsBtn.hide();
 
         $(document).ready(function () {
-            loadAuthorsListData();
+            loadAuthorsListData(authorTemplate);
         });
 
         moreAuthorsBtn.click(function () {
-            loadAuthorsListData();
+            loadAuthorsListData(authorTemplate);
         });
+
+        const authorTemplate = (authorData)=>{
+            return `<div class='row authors'>
+                        <div class='col-2'>
+                            <div class='container'><img class='avatar pt-1' src='${authorData.iconPath}' alt='Аватар автора'></div>
+                        </div>
+                        <div class='col-9'>
+                            <div class='container'>
+                                <div class='row'>
+                                    <div class='card'>
+                                        <div class='card-title'>
+                                            <div class='container-fluid'>
+                                                <div class='row'>
+                                                    <div class='col-4 fw-bold'>${authorData.authorName}</div>
+                                                    <div class='col-4 offset-4'>Дата регистрации: ${authorData.created_at}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='card-body'>
+                                            <p> Количество постов автора: ${authorData.posts_count}
+                                               <a href='/authors/${authorData.authorId}/posts'>Перейти</a></p>
+                                        </div>
+                                        <div class='card-bottom'></div>
+                                    </div>
+                                    <div class='clearfix'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+        }
 
     </script>
 {% endblock %}
