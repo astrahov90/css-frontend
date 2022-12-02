@@ -4,14 +4,6 @@ error_reporting(E_ERROR | E_PARSE);
 
 require str_replace("\\", DIRECTORY_SEPARATOR, __DIR__.'/vendor/autoload.php');
 
-spl_autoload_register(function ($className) {
-    $path = __DIR__ . '/' . $className . '.php';
-    $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
-    if (is_file($path)) {
-        require_once $path;
-    }
-});
-
 $dotenv = Dotenv\Dotenv::createImmutable(str_replace("\\", DIRECTORY_SEPARATOR,__DIR__.'/'));
 $dotenv->load();
 

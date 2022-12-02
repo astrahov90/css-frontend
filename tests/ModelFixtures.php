@@ -116,7 +116,7 @@ class ModelFixtures extends ControllerFixtures
     private static function getCreateQueryArray():iterable {
         $queryStringArray = [];
         $queryStringArray['USERS'] = '-- auto-generated definition
-            CREATE TABLE IF NOT EXISTS user
+            CREATE TABLE IF NOT EXISTS users
             (
               id                   integer      not null
                 primary key
@@ -146,7 +146,7 @@ class ModelFixtures extends ControllerFixtures
                 primary key
               autoincrement,
               author_id  INTEGER not null
-                references user
+                references users
                   on delete cascade,
               title      varchar(255),
               body       text,
@@ -163,7 +163,7 @@ class ModelFixtures extends ControllerFixtures
                 primary key
               autoincrement,
               author_id  INTEGER not null
-                references user
+                references users
                   on delete cascade,
               post_id    INTEGER not null
                 references posts
@@ -185,7 +185,7 @@ class ModelFixtures extends ControllerFixtures
                 primary key
               autoincrement,
               author_id INTEGER not null
-                references user
+                references users
                   on delete cascade,
               post_id   INTEGER not null
                 references posts
@@ -223,7 +223,7 @@ class ModelFixtures extends ControllerFixtures
     private static function addUser(\PDO $pdo, array $userData)
     {
         $queryString = "-- auto-generated definition
-                INSERT INTO user 
+                INSERT INTO users 
                 (username, auth_key, password_hash, password_reset_token, email,
                  status, created_at, updated_at, verification_token, iconPath, description) 
                 VALUES (:username, :auth_key, :password_hash, :password_reset_token, :email,

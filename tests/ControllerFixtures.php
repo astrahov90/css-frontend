@@ -4,6 +4,7 @@ namespace tests;
 
 use core\Controller;
 use core\ControllerFactory;
+use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,6 +20,11 @@ class ControllerFixtures extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
+        require str_replace("\\", DIRECTORY_SEPARATOR, __DIR__.'/../vendor/autoload.php');
+
+        $dotenv = Dotenv::createImmutable(str_replace("\\", DIRECTORY_SEPARATOR,__DIR__.'/../'));
+        $dotenv->load();
+
         global $_SESSION;
         global $_REQUEST;
         global $_SERVER;

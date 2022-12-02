@@ -3,10 +3,19 @@
 namespace tests;
 
 use core\ControllerFactory;
+use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 
 class ControllerFactoryTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        require str_replace("\\", DIRECTORY_SEPARATOR, __DIR__.'/../vendor/autoload.php');
+
+        $dotenv = Dotenv::createImmutable(str_replace("\\", DIRECTORY_SEPARATOR,__DIR__.'/../'));
+        $dotenv->load();
+    }
+
     public function setUp(): void
     {
         global $_SESSION;

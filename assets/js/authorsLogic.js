@@ -1,21 +1,17 @@
 import {hidePreloader} from "./commonLogic.js";
 import {getAuthorsListPromise, getAuthorPromise} from "./apiLogic.js";
 
-function loadAuthorsListData() {
+function loadAuthorsListData(authorTemplate) {
     let offset = $(".row.authors").length;
 
-    fillAuthorsListData(getAuthorsListPromise(offset));
+    fillAuthorsListData(authorTemplate, getAuthorsListPromise(offset));
 }
 
-function fillAuthorsListData(dataPromise)
+function fillAuthorsListData(authorTemplate, dataPromise)
 {
     dataPromise.then((result)=>{
-        let curCount = $(".row.authors").length;
         result.data.forEach(function (elem, key) {
-            let avatarField = "<img class='avatar' src='"+elem.iconPath+"' alt='Аватар автора'>";
-
-            let curIndex = curCount + key;
-            let newElement = renderAuthorElement(elem, curIndex, avatarField);
+            let newElement = authorTemplate(elem);
 
             $(newElement).insertBefore($(".moreAuthors"));
         });
@@ -26,45 +22,14 @@ function fillAuthorsListData(dataPromise)
     })
 }
 
-function renderAuthorElement(elem) {
-    return "<div class='row authors'>\n" +
-        "                <div class='col-2'>\n" +
-        "                    <div class='container'><img class='avatar pt-1' src='" + elem.iconPath + "' alt='Аватар автора'></div>\n" +
-        "                </div>\n" +
-        "                <div class='col-9'>\n" +
-        "                    <div class='container'>\n" +
-        "                        <div class='row'>\n" +
-        "                            <div class='card'>\n" +
-        "                                <div class='card-title'>\n" +
-        "                                    <div class='container-fluid'>\n" +
-        "                                        <div class='row'>\n" +
-        "                                            <div class='col-4 fw-bold'>" + elem.authorName + "</div>\n" +
-        "                                            <div class='col-4 offset-4'>Дата регистрации: " + elem.created_at + "</div>\n" +
-        "                                        </div>\n" +
-        "                                    </div>\n" +
-        "                                </div>\n" +
-        "                                <div class='card-body'>\n" +
-        "                                    <p> Количество постов автора: " + elem.posts_count +
-        "                                       <a href='/authors/" + elem.authorId + "/posts'>Перейти</a></p>\n" +
-        "                                </div>\n" +
-        "                                <div class='card-bottom'></div>\n" +
-        "                            </div>\n" +
-        "                            <div class='clearfix'></div>\n" +
-        "                        </div>\n" +
-        "                    </div>\n" +
-        "                </div>\n" +
-        "            </div>";
+function loadAuthorInfo(authorTemplate,authorId) {
+    fillAuthorData(authorTemplate, getAuthorPromise(authorId));
 }
 
-function loadAuthorInfo(authorId) {
-    fillAuthorData(getAuthorPromise(authorId));
-}
-
-function fillAuthorData(dataPromise)
+function fillAuthorData(authorTemplate, dataPromise)
 {
     dataPromise.then((data)=>{
-        let avatarField = "<img class='avatar' src='"+data.iconPath+"' alt='Аватар автора'>";
-        let newElement = renderAuthorElement(data, 0, avatarField);
+        let newElement = authorTemplate(data);
         $(".row.authors").replaceWith($(newElement));
     })
 }
@@ -72,9 +37,9 @@ function fillAuthorData(dataPromise)
 function showHideGetMoreAuthorsButton(show=true)
 {
     if (show)
-        $(".morePosts").show();
+        $(".moreAuthors").show();
     else
-        $(".morePosts").hide();
+        $(".moreAuthors").hide();
 }
 
 export {loadAuthorsListData, loadAuthorInfo}
