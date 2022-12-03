@@ -2,6 +2,7 @@
 
 namespace tests;
 
+use core\App;
 use core\Controller;
 use core\ControllerFactory;
 use Dotenv\Dotenv;
@@ -24,6 +25,8 @@ class ControllerFixtures extends TestCase
 
         $dotenv = Dotenv::createImmutable(str_replace("\\", DIRECTORY_SEPARATOR,__DIR__.'/../'));
         $dotenv->load();
+
+        $app = new App;
 
         global $_SESSION;
         global $_REQUEST;

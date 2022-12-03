@@ -36,10 +36,8 @@ class Controller_AboutTest extends ControllerFixtures
 
     public function testIndex(): void
     {
-        self::$controller->runAction('index');
-        $indexOutput = $this->getActualOutputForAssertion();
+        $indexOutput = self::$controller->runAction('index');
         $this->assertMatchesRegularExpression('/Пикомемсы - о проекте/i', $indexOutput);
-        ob_clean();
     }
 
 }

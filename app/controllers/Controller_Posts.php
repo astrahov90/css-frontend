@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use core\App;
 use core\RedisCache;
 
 class Controller_Posts extends \core\Controller
@@ -57,8 +58,7 @@ class Controller_Posts extends \core\Controller
         $data["post"] = $this->model->get($postId);
 
         $this->setCSRFToken();
-        $this->twig->addGlobal('session', $_SESSION);
-        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'comments.html'), $data);
+        return App::$app->render('comments.html', $data);
     }
 
     function action_addPost()

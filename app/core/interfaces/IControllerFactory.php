@@ -11,5 +11,5 @@ namespace core\interfaces;
 
 interface IControllerFactory
 {
-    public static function build($controller_name);
+    public static function build(string $className);
 }
