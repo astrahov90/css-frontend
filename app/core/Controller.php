@@ -9,16 +9,10 @@ use core\traits\MethodsCheckTrait;
 abstract class Controller
 {
     protected ?Model $model;
-    protected ?\Twig\Environment $twig;
 
     use AuthorizedTrait, CheckCSRFTrait, MethodsCheckTrait;
 
     const ACTION_PREFIX = 'action_';
-
-    function __construct($twig)
-    {
-        $this->twig = $twig;
-    }
 
     function action_index()
     {

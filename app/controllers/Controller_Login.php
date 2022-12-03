@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use core\App;
 use core\RedisCache;
 
 class Controller_Login extends \core\Controller
@@ -36,14 +37,11 @@ class Controller_Login extends \core\Controller
                     $data['error'] = "Имя или пароль неверные.";
 
                     $this->setCSRFToken();
-                    $this->twig->addGlobal('session', $_SESSION);
-                    echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'), $data);
+                    return App::$app->render('login.html', $data);
                 }
             }
         } else {
-            $this->setCSRFToken();
-            $this->twig->addGlobal('session', $_SESSION);
-            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'login.html'));
+            return App::$app->render('login.html',[],true);
         }
 
     }
@@ -71,8 +69,8 @@ class Controller_Login extends \core\Controller
                     $data = [];
                     $data['error'] = "Имя уже занято.";
 
-                    echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'), $data);
-                    return;
+                    $this->setCSRFToken();
+                    return App::$app->render('register.html', $data);
                 }
 
                 $iconPath = null;
@@ -108,9 +106,7 @@ class Controller_Login extends \core\Controller
                 header('Location: ' . $url);
             }
         } else {
-            $this->setCSRFToken();
-            $this->twig->addGlobal('session', $_SESSION);
-            echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'register.html'));
+            return App::$app->render('register.html', [], true);
         }
 
     }

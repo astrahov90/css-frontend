@@ -36,10 +36,8 @@ class Controller_ContactsTest extends ControllerFixtures
 
     public function testIndex(): void
     {
-        self::$controller->runAction('index');
-        $indexOutput = $this->getActualOutputForAssertion();
+        $indexOutput = self::$controller->runAction('index');
         $this->assertMatchesRegularExpression('/Пикомемсы - контакты/i', $indexOutput);
-        ob_clean();
     }
 
 }

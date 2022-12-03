@@ -2,6 +2,8 @@
 
 namespace controllers;
 
+use core\App;
+
 class Controller_Profile extends \core\Controller
 {
     function action_index()
@@ -31,8 +33,7 @@ class Controller_Profile extends \core\Controller
         $data['author'] = $this->model->get($_SESSION['userId']);
 
         $this->setCSRFToken();
-        $this->twig->addGlobal('session', $_SESSION);
-        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'profile.html'), $data);
+        return App::$app->render('profile.html', $data);
     }
 
 }

@@ -36,23 +36,17 @@ class Controller_MainTest extends ControllerFixtures
 
     public function testIndex(): void
     {
-        self::$controller->runAction('index');
-        $indexOutput = $this->getActualOutputForAssertion();
+        $indexOutput = self::$controller->runAction('index');
         $this->assertMatchesRegularExpression('/Пикомемсы - лучшее/i', $indexOutput);
-        ob_clean();
 
         $_REQUEST['newest'] = true;
-        self::$controller->runAction('index');
-        $indexOutput = $this->getActualOutputForAssertion();
+        $indexOutput = self::$controller->runAction('index');
         $this->assertMatchesRegularExpression('/Пикомемсы - свежее/i', $indexOutput);
-        ob_clean();
 
         unset($_REQUEST['newest']);
         $_REQUEST['newPost'] = true;
-        self::$controller->runAction('index');
-        $indexOutput = $this->getActualOutputForAssertion();
+        $indexOutput = self::$controller->runAction('index');
         $this->assertMatchesRegularExpression('/Пикомемсы - новый пост/i', $indexOutput);
-        ob_clean();
     }
 
 }

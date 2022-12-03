@@ -2,6 +2,8 @@
 
 namespace controllers;
 
+use core\App;
+
 class Controller_Main extends \core\Controller
 {
     function action_index()
@@ -9,8 +11,6 @@ class Controller_Main extends \core\Controller
         $data = [];
 
         $templateName = 'posts.html';
-        $this->setCSRFToken();
-        $this->twig->addGlobal('session', $_SESSION);
 
         if (isset($_REQUEST["newPost"])) {
             $data['newPost'] = true;
@@ -22,11 +22,12 @@ class Controller_Main extends \core\Controller
                 $data['best'] = true;
         }
 
-        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,$templateName), $data);
+        $this->setCSRFToken();
+        return App::$app->render($templateName, $data);
     }
 
     function action_error()
     {
-        echo $this->twig->render(str_replace('\\', DIRECTORY_SEPARATOR,'error.html'));
+        return App::$app->render('error.html');
     }
 }
