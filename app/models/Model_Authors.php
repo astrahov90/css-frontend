@@ -42,8 +42,8 @@ class Model_Authors extends \core\Model implements IModelGet, IModelPostWork
     public function getCount(iterable $args)
     {
         $queryString = "SELECT 
-        COUNT(DISTINCT posts.author_id) as authors_count
-        FROM posts";
+        COUNT(DISTINCT users.id) as authors_count
+        FROM users";
         $result = $this->getValue($queryString);
 
         return $result;

@@ -97,7 +97,7 @@ class Model_Posts extends \core\Model implements IModelGet, IModelCreate, IModel
     {
         $params = [];
         $params["title"] = $args['title'];
-        $params["body"] = $args['title'];
+        $params["body"] = $args['body'];
         $params["author_id"] = $args['authorId'];
         $params["created_at"] = time();
 
